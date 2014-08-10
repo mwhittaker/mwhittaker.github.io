@@ -2,4 +2,4 @@
 _site/
 
 # vim
-.sw[op]
+*.sw[op]
