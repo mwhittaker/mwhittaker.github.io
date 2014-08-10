@@ -1,0 +1,5 @@
+# jekyll
+_site/
+
+# vim
+.sw[op]
