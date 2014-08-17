@@ -7,6 +7,7 @@ all: $(SVGS)
 
 purge: clean
 	-rm *.svg
+	-rm cap*.tex
 
 clean:
 	-rm *.aux
