@@ -42,8 +42,8 @@ Select "GNOME with Xmonad".
 If all goes well, you should be greeted with an empty GNOME desktop.
 
 <center>
-<a href="{{site.url}}/{{ page.path | replace: '_posts', 'assets' | replace: '.md', ''}}/desktop.png">
-    <img src="{{site.url}}/{{ page.path | replace: '_posts', 'assets' | replace: '.md', ''}}/desktop.png" class="wide-image">
+<a href="{{site.url}}/assets/xmonad/desktop.png">
+    <img src="{{site.url}}/assets/xmonad/desktop.png" class="wide-image">
 </a>
 </center>
 
@@ -51,8 +51,8 @@ Press `Alt-Shift-Enter` a couple of times and you should see a bunch of tiled
 terminals.
 
 <center>
-<a href="{{site.url}}/{{ page.path | replace: '_posts', 'assets' | replace: '.md', ''}}/terminals.png">
-    <img src="{{site.url}}/{{ page.path | replace: '_posts', 'assets' | replace: '.md', ''}}/terminals.png" class="wide-image">
+<a href="{{site.url}}/assets/xmonad/terminals.png">
+    <img src="{{site.url}}/assets/xmonad/terminals.png" class="wide-image">
 </a>
 </center>
 

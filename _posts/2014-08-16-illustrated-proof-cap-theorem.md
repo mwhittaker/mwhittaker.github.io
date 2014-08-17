@@ -27,10 +27,25 @@ to [Gilbert and Lynch's paper][paper].
 
 ## A Distributed System ##
 Let's consider a very simple distributed system. Our system is composed of two
-computers, `G1` and `G2`. Both of these computers are keeping track of the same
-variable: an integer we'll call `v`. `G1` and `G2` can communicate with each
-other over some network. `G1` and `G2` can also communicate with other
-computers we'll call clients. Here's what our system look like.
+servers, `G1` and `G2`. Both of these servers are keeping track of the same
+variable, `v`, whose value is initially `v0`. `G1` and `G2` can communicate
+with each other and can also communicate with external clients. Here's
+what our system looks like.
+
+<center>
+<img src="{{site.url}}/assets/cap/cap1.svg" class="three-quarter-image">
+</center>
+
+A client can request to write and read from any server. When a server receives
+a request, it performs any computations it wants and then responds to the
+client. For example, here is what a write would look like.
+
+<center>
+<img src="{{site.url}}/assets/cap/cap2.svg" class="three-quarter-image">
+<img src="{{site.url}}/assets/cap/cap3.svg" class="three-quarter-image">
+<img src="{{site.url}}/assets/cap/cap4.svg" class="three-quarter-image">
+</center>
+
 
 ## Consistency ##
 ## Availability ##
