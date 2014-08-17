@@ -11,4 +11,3 @@ following sites.
 
 - [My GitHub profile](http://github.com/mwhittaker)
 - [My StackOverflow account](http://stackoverflow.com/users/3187068/mwhittaker)
-- [My blog](http://mwhittaker.github.io)
