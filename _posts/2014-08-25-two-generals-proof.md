@@ -36,6 +36,17 @@ algorithm to solve the problem.
 
 
 # Formal Model #
+
+Before approaching the Impossibility Proof, it is necessary to explain the Formal Model that is being used in this proof. In more specific terms, a formal model is a set of specifications under which the problem may be approached or looked at. 
+
+With that in mind, it is possible to start formalizing the Two Generals problem. Imagine instead of Alice and Bob, there are two processes trying to communicate. Instead of Eve, there is a unreliable network where information sent between the two processes can be lost at random at undetermined rates. Note that this example of two processes can be extrapolated to two or more processes and nothing would change for the proof.
+
+Next, for each process, there is a concept of state. [Michael, insert definition of state here] A configuration for an entire system is a list of states, where each state corresponds to a process. [Insert better event(s) definition here]. When an event is applied to a configuration, the configuration of the system changes to another configuration (meaning that some state for a process within the configuration has changed). A list of alternating configurations and events is called an execution segment.
+
+Before proceeding onto the actual Impossibility Proof, the last point to address is the definition of indistinguishability with respect to execution segments. Here goes: an execution segment A is indistinguishable from execution segment B, for a single process P, if P sees the same sequence of events in both executions.
+
+In more simplified terms, this means that if there are two executions A and B, and they alter a single process P in the same way with the same events in the same order, then from the perspective of the process P, it cannot tell which execution was executed on itself.
+
 # Impossibility Proof #
 
 [wiki]:       http://en.wikipedia.org/wiki/Two_Generals'_Problem
