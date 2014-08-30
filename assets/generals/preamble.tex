@@ -1,0 +1,40 @@
+\documentclass[crop,tikz,convert={outext=.svg,command=\unexpanded{pdf2svg \infile\space\outfile}},multi=false]{standalone}
+
+\usepackage{ifthen}
+\usetikzlibrary{arrows}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+
+\tikzstyle{state}=[circle, fill=gray!20, minimum width = 1cm]
+\tikzstyle{server}=[circle, fill=blue!20, minimum width = 1cm]
+\tikzstyle{client}=[circle, fill=gray!20, minimum width = 1cm]
+
+% #1 G_1 text
+% #2 G_2 text
+% #3 top text
+% #4 left text
+% #5 right text
+% #6 draw connection
+\newcommand{\capnet}[6]{%
+  \begin{tikzpicture}
+    % nodes
+    \node[server] (G1)                     {#1};
+    \node[server] (G2) [right = 3cm of G1] {#2};
+    \node (mid) at ($(G1)!0.5!(G2)$) {};
+    \node[client] (c) [below = 1.7cm of mid] {};
+    
+    % labels
+    \node (G1label) [above = 0cm of G1] {$G_1$};
+    \node (G2label) [above = 0cm of G2] {$G_2$};
+    \node (clabel)  [below = 0cm of c]  {client};
+    
+    % paths
+    \path (G1) edge node[left]        {#4} (c);
+    \path (G2) edge node[right]       {#5} (c);
+    \ifthenelse{\boolean{#6}}{%
+      \path (G1) edge node[above] (net) {#3} (G2);
+    }{%
+      % do nothing
+    }
+  \end{tikzpicture}
+}
