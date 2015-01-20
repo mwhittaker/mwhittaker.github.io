@@ -16,7 +16,7 @@ author:
   name:           'Michael Whittaker'
   url:            http://github.com/mwhittaker/
 
-paginate:         5
+paginate:         1
 
 # Custom vars
 version:          1.0.0

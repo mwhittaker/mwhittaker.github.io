@@ -23,7 +23,7 @@ exactly do you even mean by a distributed system?
 In this section, we'll introduce a simple distributed system and explain what
 it means for that system to be available, consistent, and partition tolerant.
 For a formal description of the system and the three properties, please refer
-to [Gilbert and Lynch's paper][paper]. 
+to [Gilbert and Lynch's paper][paper].
 
 ## A Distributed System ##
 Let's consider a very simple distributed system. Our system is composed of two
@@ -64,9 +64,9 @@ Here's how Gilbert and Lynch describe consistency.
 
 In a consistent system, once a client writes a value to any server and gets a
 response, it expects to get that value (or a fresher value) back from any
-server it reads from. 
+server it reads from.
 
-Here is an example of an **inconsistent** system. 
+Here is an example of an **inconsistent** system.
 
 <center>
 <img src="{{site.url}}/assets/cap/cap7.svg" class="half-image">
@@ -139,7 +139,7 @@ system. It looks like this.
 Next, we have our client request that $v\_1$ be written to $G\_1$. Since our
 system is available, $G\_1$ must respond. Since the network is partitioned,
 however, $G\_1$ cannot replicate its data to $G\_2$. Gilbert and Lynch call
-this phase of execution $\alpha\_1$. 
+this phase of execution $\alpha\_1$.
 
 <center>
 <img src="{{site.url}}/assets/cap/cap22.svg" class="half-image">
@@ -166,13 +166,3 @@ system acts inconsistently. Thus, no such system exists.
 
 [paper]:     http://lpd.epfl.ch/sgilbert/pubs/BrewersConjecture-SigAct.pdf
 [wikipedia]: http://en.wikipedia.org/wiki/CAP_theorem
-
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/javascript">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['$','$']],
-        processEscapes: true
-    }
-});
-</script>

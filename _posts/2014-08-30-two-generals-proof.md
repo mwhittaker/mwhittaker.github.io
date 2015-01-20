@@ -15,7 +15,7 @@ Theory of Distributed Systems][yale-notes].
 # The Two Generals' Problem #
 Imagine two generals: General Alice and General Bob. Alice's army and Bob's
 army are quite a distance away from one another. The only way Alice and Bob
-can communicate is by sending each other enveloped messages through the mail. 
+can communicate is by sending each other enveloped messages through the mail.
 
 Between Alice's and Bob's armies is an enemy army led by General Eve. Alice
 and Bob need to decide whether to attack Eve's army or to retreat from Eve's
@@ -34,12 +34,12 @@ burn the message. She does not, however, get to open the enveloped message.
 
 The Two Generals' Problem is the problem of designing an algorithm for Alice
 and Bob that ensures they agree to attack or agree to retreat. That is, we must
-write an algorithm that achieves consensus. 
+write an algorithm that achieves consensus.
 
 # The Impossibility #
 The Two Generals' Problem seems innocuous enough, but it turns out that there
 does not exist an algorithm that can guarantee consensus. Before we formally
-prove this impossibility, let's informally explore it with an example.  
+prove this impossibility, let's informally explore it with an example.
 
 Let's say Alice wants to attack. She writes "attack" on a piece of paper, wraps
 the message in an envelope, and sends the message off to Bob. Now, one of two
@@ -59,7 +59,7 @@ acknowledging message. Again, this message could either be burned or delivered.
 If the message is burned, then Alice never receives her acknowledgement and
 cannot make a certain decision. This means that if Bob's message is lost, Bob
 can't make a decision without the possibility that Alice makes the opposite
-decision.  
+decision.
 
 Perhaps we can solve this uncertainty with *more* acknowledgements! Bob waits
 for an acknowledgement of his acknowledgement from Alice. But, after sending
@@ -75,7 +75,7 @@ need to formalize the problem. We'll label Alice and Bob $A$ and $B$. Each
 general has a **state**, $q$, from some state set $Q$. Each general also has
 an **outbox** and **inbox** which can hold exactly one enveloped message to
 send or receive respectively. A **configuration** is the pair of Alice and
-Bob's states $(q\_a, q\_b)$. 
+Bob's states $(q\_a, q\_b)$.
 
 
 <center>
@@ -98,7 +98,7 @@ envelope in their outbox.
   <figure>
     <img src="{{site.url}}/assets/generals/gen2.svg" class="three-quarter">
     <figcaption>
-    Fig 2. A delivery event. 
+    Fig 2. A delivery event.
     </figcaption>
   </figure>
 </center>
@@ -136,7 +136,7 @@ actions in $E\_1$ and $E\_2$.
 
 # Impossibility Proof #
 Now, we'll prove that there does not exist an algorithm that can solve the Two
-Generals' Problem. 
+Generals' Problem.
 
 First, let's formalize the Two Generals' Problem. Each general begins with
 either a 0 or 1 in its inbox. Eve gets to decide these initial values. After
@@ -163,7 +163,7 @@ Bob. Note that I burn the message without opening the envelope and reading the
 message. Call this execution $E\_2$.  $E\_1$ is indistinguishable to $E\_2$ for
 Alice. Thus, she must perform the same action in $E\_1$ and $E\_2$. This means
 Alice must again output 1. By the agreement condition, this means that Bob must
-also output 1.  
+also output 1.
 
 I'll fire up my time machine and again keep everything the same as in $E\_2$,
 except this time I'll burn Bob's last message to Alice. Call this execution
@@ -172,13 +172,13 @@ argument as above, Bob and Alice both output 1.
 
 I'll continue my time machine antics until I've dropped every messages. Alice
 and Bob still begin with 1's as input and still output 1 after $N$ rounds. Call
-this execution $E\_k$. 
+this execution $E\_k$.
 
 With the help of my time machine, I'll switch Alice's input from 1 to 0. This
 execution, $E\_{k+1}$, is indistinguishable to $E\_k$ for Alice, so she still
 outputs 1, as does Bob. Next, I'll switch Bob's input to 0. Again, this
 execution, $E\_{k+2}$, is indistinguishable to the previous execution,
-$E\_{k+1}$, for Bob, so both Bob and Alice output 1.  
+$E\_{k+1}$, for Bob, so both Bob and Alice output 1.
 
 Now that both Alice and Bob begin with an input of 0, I'll use my time machine
 and deliver the first message of Bob's. Then I'll deliver the first message of
@@ -192,13 +192,3 @@ is a contradiction.
 
 [wiki]:       http://en.wikipedia.org/wiki/Two_Generals'_Problem
 [yale-notes]: http://cs-www.cs.yale.edu/homes/aspnes/classes/465/notes.pdf
-
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/javascript">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['$','$']],
-        processEscapes: true
-    }
-});
-</script>
