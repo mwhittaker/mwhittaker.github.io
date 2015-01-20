@@ -3,7 +3,7 @@ layout: post
 title: Lamport's Logical Clocks
 ---
 
-Humans use physical time to order events. For example, we say that an event at
+People use physical time to order events. For example, we say that an event at
 8:15 AM occurs before an event at 8:16 AM. In distributed systems, physical
 clocks are not always precise, so we can't rely on physical time to order
 events. Instead, we can use *logical clocks* to create a partial or total
@@ -40,7 +40,7 @@ A$. Similarly, a binary relation on a set $A$ and $B$ is a subset of $A \times
 B$. For example, here's a couple relations on $\\{1, 2\\}$ and $\\{a, b, c\\}$:
 $\\{(1, a), (2, c)\\}$, $\\{(1, a), (2, b), (3, c)\\}$, $\\{\\}$, and $\\{(1,
 a), (1, b), (1, c)\\}$. We can denote $(a, b) \in R$ as $a\,R\,b$.  Consider
-for example the familiar less-than relation, $< $, on the set of natural
+for example the familiar "less-than" relation, $< $, on the set of natural
 numbers. Two naturals $i$, and $j$ are in the relation $< $ if $i$ is less
 than $j$. We denote this $i < j$. Concretely, $< $ is the infinite set
 $\\{(0, 1), (0, 2), (0, 3), \ldots, (1, 2), (1, 3), (1, 4), \ldots\\}$.
@@ -72,19 +72,71 @@ ordering that satisifes another condition.
 
 - **totality**: if $a \neq b$ then $a < b$ or $b < a$
 
-For example, the less-than relation on natural numbers is an irreflexive total
+For example, the "less-than" relation on natural numbers is an irreflexive total
 ordering. For all naturals $i$ and $j$ where $i \neq j$, $i < j$ or $j < i$.
 
 # A Partial Ordering #
+Physical time forms a natural "happened-before" irreflexive partial ordering of
+events. If we consider two events $a$ and $b$, we can use physical time to know
+whether $a$ happened before $b$, $b$ happened before $a$, or the two are
+unrelated (i.e. they happened at the same time). Since physical clocks are
+imprecise, we can't use physical time in a distributed system, but we'd still
+like an irreflexive partial ordering of events.
+
+We'll define such an ordering, but first, let's formalize our system a bit. Our
+distributed system consists of a set of processes that each execute their own
+set of events. There are three events each process can execute:
+
+1. A local event
+2. Sending a message to another process
+3. Receiving a message to another process
+
+The union of every process' events is the set of events we wish to order. We can
+visualize such a system using a space-time graph, such as the one in Figure 1
+below. Each vertical line represents a process. Time flows forward as we
+traverse the graph upwards through the set of events represented as annotated
+points. If one process sends a message and another receives a message, the two
+are events are connected by a colored line.
 
 <center>
   <figure>
     <img src="{{site.url}}/assets/lamport/clock.svg">
     <figcaption>
-    Fig 1.
+    Figure 1
     </figcaption>
   </figure>
 </center>
+
+The system in Figure 1 has three processes: $A$, $B$, and $C$. Process $A$ has
+four events.
+
+1. $A_0$: Process $A$ sends a message to process $B$
+2. $A_1$: Process $A$ receives a message from process $B$
+3. $A_2$: Process $A$ executes a local event
+4. $A_3$: Process $A$ receives a message from process $B$
+
+Now we can define our "happened-before" irreflexive paper ordering, denoted
+$\rightarrow$, as the smallest relation on events that satisfies the following
+three properties.
+
+1. If $a$ and $b$ are events in the same process and $a$ happens before $b$
+   then $a \rightarrow b$. For example, $A\_0 \rightarrow A\_1$.
+2. If a process sends a message as event $a$ and another process receives the
+   message as event $b$, then $a \rightarrow b$. For example, $A\_0 \rightarrow
+   B\_2$.
+3. If $a \rightarrow b$ and $b \rightarrow c$, then $a \rightarrow c$ For
+   example, $A\_0 \rightarrow B\_2$ and $B\_2 \rightarrow B\_4$ and $B\_4
+   \rightarrow C\_3$, so $A\_0 \rightarrow C\_3$.
+
+Graphically, $a \rightarrow b$ if we can trace a path forward through time from
+$a$ to $b$. For example, we can show that $A\_0 \rightarrow C\_3$ by tracing
+from $A\_0$ across the blue line to $B\_2$ up to $B\_4$ and across the purple
+line to $C\_3$. This interpretation also makes it clear that some events such
+as $A\_2$ and $B\_3$ are not related because we can't trace a path forward
+through time from $A\_2$ to $B\_3$ or from $B\_3$ to $A\_2$. In terms of
+physical time, $A\_2$ might happen before $B\_3$, but our $\rightarrow$
+relation is defined independent of physical time.
+
 # Logical Clocks #
 # A Total Ordering #
 # Implementation #
