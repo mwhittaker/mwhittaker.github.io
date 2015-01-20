@@ -1,18 +1,18 @@
 ---
 layout: post
-title: Logical Clocks
+title: Lamport's Logical Clocks
 ---
 
 Humans use physical time to order events. For example, we say that an event at
 8:15 AM occurs before an event at 8:16 AM. In distributed systems, physical
 clocks are not always precise, so we can't rely on physical time to order
 events. Instead, we can use *logical clocks* to create a partial or total
-ordering of events in distributed systems. This article explores the concept
-and [an implementation][mwhittaker-clocks] of the logical clocks invented by
-Leslie Lamport in his seminal paper [Time, Clocks, and the Ordering of Events
-in a Distributed System][lamport-paper].
+ordering of events. This article explores the concept and [an
+implementation][mwhittaker-clocks] of the logical clocks invented by Leslie
+Lamport in his seminal paper [Time, Clocks, and the Ordering of Events in a
+Distributed System][lamport-paper].
 
-# Math #
+# Math Refresher #
 Before we dive into time, clocks, or ordering, let's quickly review a bit of
 the underlying math.
 
@@ -40,27 +40,54 @@ A$. Similarly, a binary relation on a set $A$ and $B$ is a subset of $A \times
 B$. For example, here's a couple relations on $\\{1, 2\\}$ and $\\{a, b, c\\}$:
 $\\{(1, a), (2, c)\\}$, $\\{(1, a), (2, b), (3, c)\\}$, $\\{\\}$, and $\\{(1,
 a), (1, b), (1, c)\\}$. We can denote $(a, b) \in R$ as $a\,R\,b$.  Consider
-for example the familiar "less than" relation, $< $, on the set of natural
+for example the familiar less-than relation, $< $, on the set of natural
 numbers. Two naturals $i$, and $j$ are in the relation $< $ if $i$ is less
 than $j$. We denote this $i < j$. Concretely, $< $ is the infinite set
 $\\{(0, 1), (0, 2), (0, 3), \ldots, (1, 2), (1, 3), (1, 4), \ldots\\}$.
 
-## Partial Orderings ##
-An *irreflexive partial ordering* on a set $A$ is a relation on $A$ that
-satisfies three properties.
+## Partial and Total Orderings ##
+An [*irreflexive partial ordering*][wiki-partial-ordering] on a set $A$ is a
+relation on $A$ that satisfies three properties.
 
 1. **irreflexivity**: $a \nless a$
 2. **antisymmetry**: if $a < b$ then $b \nless a$
 3. **transitivity**: if $a < b$ and $b < c$ then $a < c$
 
+For example, the strict subset relation we saw earlier is an example of an
+irreflexive partial ordering. Here are some examples of the previous three
+properties being satisfied.
 
+1. **irreflexivity**: $\\{1, 2, 3\\} \not\subset \\{1, 2, 3\\}$
+2. **antisymmetry**: $\\{1, 2\\} \subset \\{1, 2, 3\\}$, so $\\{1, 2, 3\\}
+   \not\subset \\{1, 2\\}$
+3. **transitivity**: $\\{1\\} \subset \\{1, 2\\}$ and $\\{1, 2\\} \subset \\{1,
+   2, 3\\}$, so $\\{1\\} \subset \\{1, 2, 3\\}$
 
-## Total Orderings ##
+It's important to note that for some sets $a$ and $b$, $a \not\subset b$ and $b
+\not \subset a$. For example, $\\{1, 2\\} \not \subset \\{2, 3\\}$ and $\\{2,
+3\\} \not\subset \\{1, 2\\}$. This is quite different than total orderings.
 
-# Partial Ordering #
-# Total Ordering #
+An [*irreflexive total ordering*][wiki-total-ordering] is a irreflexive partial
+ordering that satisifes another condition.
+
+- **totality**: if $a \neq b$ then $a < b$ or $b < a$
+
+For example, the less-than relation on natural numbers is an irreflexive total
+ordering. For all naturals $i$ and $j$ where $i \neq j$, $i < j$ or $j < i$.
+
+# A Partial Ordering #
+
+<center>
+  <figure>
+    <img src="{{site.url}}/assets/lamport/clock.svg">
+    <figcaption>
+    Fig 1.
+    </figcaption>
+  </figure>
+</center>
+# Logical Clocks #
+# A Total Ordering #
 # Implementation #
-# Mutual Exclusion #
 
 [lamport-paper]:          http://web.stanford.edu/class/cs240/readings/lamport.pdf
 [mwhittaker-clocks]:      https://github.com/mwhittaker/clocks
