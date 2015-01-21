@@ -17,11 +17,11 @@ Before we dive into time, clocks, or ordering, let's quickly review a bit of
 the underlying math.
 
 ## Sets ##
-A [*set*][wiki-set] is an unordered collection of distinct things. For example,
-we can bundle the integers 3, 11, and 0 into a set denoted $\\{3, 11, 0\\}$.
-Or, we could throw the integer 42 into a set with only one element: $\\{42\\}$.
-Or, we could have the empty set $\\{\\}$. We say an element $a$ is a member of
-$A$ if $A$ contains $a$, and we denote this $a \in A$.
+A [*set*][wiki-set] is an unordered collection of distinct things.  For
+example, we can bundle the integers 3, 11, and 0 into a set denoted $\\{3, 11,
+0\\}$.  Or, we could throw the integer 42 into a set with only one element:
+$\\{42\\}$.  Or, we could have the empty set $\\{\\}$. We say an element $a$ is
+a member of $A$ if $A$ contains $a$, and we denote this $a \in A$.
 
 A [*subset*][wiki-subset] $A$ of a set $B$ is a set whose elements are all
 members of $B$. We denote that $A$ is a subset of $B$ as $A \\subseteq B$. For
@@ -41,9 +41,9 @@ B$. For example, here's a couple relations on $\\{1, 2\\}$ and $\\{a, b, c\\}$:
 $\\{(1, a), (2, c)\\}$, $\\{(1, a), (2, b), (3, c)\\}$, $\\{\\}$, and $\\{(1,
 a), (1, b), (1, c)\\}$. We can denote $(a, b) \in R$ as $a\,R\,b$.  Consider
 for example the familiar "less-than" relation, $< $, on the set of natural
-numbers. Two naturals $i$, and $j$ are in the relation $< $ if $i$ is less
-than $j$. We denote this $i < j$. Concretely, $< $ is the infinite set
-$\\{(0, 1), (0, 2), (0, 3), \ldots, (1, 2), (1, 3), (1, 4), \ldots\\}$.
+numbers. Two naturals $i$, and $j$ are in the relation $< $ if $i$ is less than
+$j$. We denote this $i < j$. Concretely, $< $ is the infinite set $\\{(0, 1),
+(0, 2), (0, 3), \ldots, (1, 2), (1, 3), (1, 4), \ldots\\}$.
 
 ## Partial and Total Orderings ##
 An [*irreflexive partial ordering*][wiki-partial-ordering] on a set $A$ is a
@@ -72,14 +72,15 @@ ordering that satisifes another condition.
 
 - **totality**: if $a \neq b$ then $a < b$ or $b < a$
 
-For example, the "less-than" relation on natural numbers is an irreflexive total
-ordering. For all naturals $i$ and $j$ where $i \neq j$, $i < j$ or $j < i$.
+For example, the "less-than" relation on natural numbers is an irreflexive
+total ordering. For all naturals $i$ and $j$ where $i \neq j$, $i < j$ or $j <
+i$.
 
 # A Partial Ordering #
 Physical time forms a natural "happened-before" irreflexive partial ordering of
 events. If we consider two events $a$ and $b$, we can use physical time to know
 whether $a$ happened before $b$, $b$ happened before $a$, or the two are
-unrelated (i.e. they happened at the same time). Since physical clocks are
+unrelated (i.e. they happened at the same time).  Since physical clocks are
 imprecise, we can't use physical time in a distributed system, but we'd still
 like an irreflexive partial ordering of events.
 
@@ -91,9 +92,9 @@ set of events. There are three events each process can execute:
 2. Sending a message to another process
 3. Receiving a message to another process
 
-The union of every process' events is the set of events we wish to order. We can
-visualize such a system using a space-time graph, such as the one in Figure 1
-below. Each vertical line represents a process. Time flows forward as we
+The union of every process' events is the set of events we wish to order. We
+can visualize such a system using a space-time graph, such as the one in Figure
+1 below. Each vertical line represents a process. Time flows forward as we
 traverse the graph upwards through the set of events represented as annotated
 points. If one process sends a message and another receives a message, the two
 are events are connected by a colored line.
@@ -101,9 +102,7 @@ are events are connected by a colored line.
 <center>
   <figure>
     <img src="{{site.url}}/assets/lamport/clock.svg">
-    <figcaption>
-    Figure 1
-    </figcaption>
+    <figcaption> Figure 1 </figcaption>
   </figure>
 </center>
 
@@ -138,7 +137,55 @@ physical time, $A\_2$ might happen before $B\_3$, but our $\rightarrow$
 relation is defined independent of physical time.
 
 # Logical Clocks #
+Now let's introduce clocks to help us order events according to our
+$\rightarrow$ ordering. Unlike physical clocks which are physical entities that
+assign physical times to events, our clocks are simply a conceptualization of a
+mathematical function that assigns numbers to events.  These numbers act as
+timestamps that help us order events. Since our clocks logically order events,
+rather than physically order them, we call them *logical clocks*.
+
+More formally, each process $P\_i$ has a clock $C\_i$ which is a function from
+events to the integers. The timestamp of an event $e$ in $P\_i$ is $C\_i(e)$.
+The system clock, $C$, is also a function from events to the integers where
+$C(e) = C\_i(e)$ when $e$ is an event in $P\_i$. In Figure 1, timestamps are
+associated with horizontal dashed lines beginning at 0 and increasing by 1
+forwards through time. For example, events $B\_0$ through $B\_7$ have
+timestamps $0$ through $7$.
+
+We evaluate our logical clocks with the following correctness criterion known
+as the *Clock Condition*.
+
+$$ \forall a, b.\,a \rightarrow b \implies C(a) < C(b) $$
+
+For example, $A\_0 \rightarrow B\_2$, so in order for a clock $C$ to satisfy
+the Clock Condition, it must be that $C(A\_0) < C(B\_2)$. Also note that it is
+**not** the case that $\forall a, b.\, C(a) < C(b) \implies a \rightarrow b$.
+Consider $A\_2$ and $B\_3$. $C(A\_2) < C(B\_3)$, yet $A\_2$ and $B\_3$ are not
+related according to our $\rightarrow$ ordering.
+
+Given a system, we can construct a logical clock using a simple algorithm. Each
+process $P\_i$ maintains a mutable timestamp $C\_i$. When an event $e$ occurs, we
+let $C\_i(e)$ be $C\_i$ when $e$ occurs. Each process $P\_i$ increments $C\_i$
+after every event in $P\_i$. Also, when a process $P\_i$ sends a message to
+$P\_j$, it includes its timestamp $C\_i$ with the message. When $P\_j$ receives
+the message, it sets its timestamp $C\_j$ to be greater than the received
+$C\_i$. A concrete implementation of this algorithm is discussed below.
+
 # A Total Ordering #
+Our algorithm generates a clock that is consistent with our $\rightarrow$
+ordering according to the Clock Condition, but what if we want to totally order
+the events of a system? It's surprisingly simple! First, choose an arbitrary
+irreflexive total ordering of the processes, denoted $\Rightarrow$. For
+example, $\prec$ may be $\\{(A, B), (A, C), (B, C)\\}$. Now, we can define a
+total ordering of events using $C$ and our $\prec$ ordering as the smallest
+relation satisfying the following properties.
+
+1. If $C(a) < C(b)$, then $a \Rightarrow b$
+2. If $C(a) = C(b)$ and $a \prec b$, then $a \Rightarrow b$
+
+Now, we can order previously unrelated events. For example, $A\_1 \Rightarrow
+B\_2$ and $A\_2 \Rightarrow B\_3$.
+
 # Implementation #
 
 [lamport-paper]:          http://web.stanford.edu/class/cs240/readings/lamport.pdf
