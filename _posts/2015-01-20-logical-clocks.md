@@ -7,7 +7,7 @@ People use physical time to order events. For example, we say that an event at
 8:15 AM occurs before an event at 8:16 AM. In distributed systems, physical
 clocks are not always precise, so we can't rely on physical time to order
 events. Instead, we can use *logical clocks* to create a partial or total
-ordering of events. This article explores the concept and [an
+ordering of events. This article explores the concept of and [an
 implementation][mwhittaker-clocks] of the logical clocks invented by Leslie
 Lamport in his seminal paper [Time, Clocks, and the Ordering of Events in a
 Distributed System][lamport-paper].
@@ -90,7 +90,7 @@ set of events. There are three events each process can execute:
 
 1. A local event
 2. Sending a message to another process
-3. Receiving a message to another process
+3. Receiving a message from another process
 
 The union of every process' events is the set of events we wish to order. We
 can visualize such a system using a space-time graph, such as the one in Figure
@@ -114,7 +114,7 @@ four events.
 3. $A_2$: Process $A$ executes a local event
 4. $A_3$: Process $A$ receives a message from process $B$
 
-Now we can define our "happened-before" irreflexive paper ordering, denoted
+Now we can define our "happened-before" irreflexive partial ordering, denoted
 $\rightarrow$, as the smallest relation on events that satisfies the following
 three properties.
 
@@ -187,6 +187,93 @@ Now, we can order previously unrelated events. For example, $A\_1 \Rightarrow
 B\_2$ and $A\_2 \Rightarrow B\_3$.
 
 # Implementation #
+I implemented [Lamport's logical clocks in Python][mwhittaker-clocks]! The
+implementation provides a function `lamport.wind` which takes in a list of
+functions each of which represents a process. The functions take in a `Clock_i`
+instance that supports three methods: `send(n)`, `recv(n)`, and `local()`.
+`wind` returns a function which you can invoke to plot the space-time graphs
+we've been using to visualize the logical clocks. Here's a couple of examples!
+
+{% highlight python %}
+import lamport
+
+def f(clock):
+    clock.send(1)
+    clock.recv(1)
+
+def g(clock):
+    clock.recv(0)
+    clock.send(0)
+
+lamport.wind([f, g])()
+{% endhighlight %}
+<center>
+  <figure>
+    <img src="{{site.url}}/assets/lamport/clock2.svg">
+  </figure>
+</center>
+
+{% highlight python %}
+import lamport
+
+def f(clock):
+    clock.send(1)
+    clock.send(2)
+    clock.recv(1)
+    clock.recv(2)
+
+def g(clock):
+    clock.send(0)
+    clock.send(2)
+    clock.recv(0)
+    clock.recv(2)
+
+def h(clock):
+    clock.send(0)
+    clock.send(1)
+    clock.recv(0)
+    clock.recv(1)
+
+lamport.wind([f, g, h])()
+{% endhighlight %}
+<center>
+  <figure>
+    <img src="{{site.url}}/assets/lamport/clock3.svg">
+  </figure>
+</center>
+
+{% highlight python %}
+import lamport
+
+def f(clock):
+    clock.send(1)
+    clock.recv(1)
+    clock.local()
+    clock.recv(1)
+
+def g(clock):
+    clock.send(0)
+    clock.send(2)
+    clock.recv(0)
+    clock.local()
+    clock.send(2)
+    clock.send(0)
+    clock.local()
+    clock.recv(2)
+
+def h(clock):
+    clock.local()
+    clock.send(1)
+    clock.recv(1)
+    clock.recv(1)
+
+lamport.wind([f, g, h], "clock.png")()
+{% endhighlight %}
+<center>
+  <figure>
+    <img src="{{site.url}}/assets/lamport/clock.svg">
+  </figure>
+</center>
 
 [lamport-paper]:          http://web.stanford.edu/class/cs240/readings/lamport.pdf
 [mwhittaker-clocks]:      https://github.com/mwhittaker/clocks
