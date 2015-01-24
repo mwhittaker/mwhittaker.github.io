@@ -101,7 +101,7 @@ are events are connected by a colored line.
 
 <center>
   <figure>
-    <img src="{{site.url}}/assets/lamport/clock.svg">
+    <img src="{{site.url}}/assets/lamport/clock.svg" class="wide-image">
     <figcaption> Figure 1 </figcaption>
   </figure>
 </center>
@@ -209,7 +209,7 @@ lamport.wind([f, g])()
 {% endhighlight %}
 <center>
   <figure>
-    <img src="{{site.url}}/assets/lamport/clock2.svg">
+    <img src="{{site.url}}/assets/lamport/clock2.svg" class="wide-image">
   </figure>
 </center>
 
@@ -238,7 +238,7 @@ lamport.wind([f, g, h])()
 {% endhighlight %}
 <center>
   <figure>
-    <img src="{{site.url}}/assets/lamport/clock3.svg">
+    <img src="{{site.url}}/assets/lamport/clock3.svg" class="wide-image" >
   </figure>
 </center>
 
@@ -271,7 +271,7 @@ lamport.wind([f, g, h], "clock.png")()
 {% endhighlight %}
 <center>
   <figure>
-    <img src="{{site.url}}/assets/lamport/clock.svg">
+    <img src="{{site.url}}/assets/lamport/clock.svg" class="wide-image">
   </figure>
 </center>
 
