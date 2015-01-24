@@ -175,5 +175,9 @@ def main():
     (H1 | B).plot("H1B.svg")
     (H1 | C).plot("H1C.svg")
 
+    (H1 | p).plot("H1p.svg")
+    (H1 | q).plot("H1q.svg")
+    (H1 | r).plot("H1r.svg")
+
 if __name__ == "__main__":
     main()
