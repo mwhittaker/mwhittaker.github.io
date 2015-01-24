@@ -179,5 +179,20 @@ def main():
     (H1 | q).plot("H1q.svg")
     (H1 | r).plot("H1r.svg")
 
+    H2 = History([
+        C.r.E(x),
+        B.p.E(y),
+        C.r.Ok(),
+        A.p.E(x),
+        A.p.Ok(),
+        C.r.E(y),
+        B.p.Ok(),
+        B.q.E(z),
+        A.q.D(),
+        B.q.Ok(),
+        A.q.Ok(z),
+    ])
+    H2.plot("H2.svg")
+
 if __name__ == "__main__":
     main()
