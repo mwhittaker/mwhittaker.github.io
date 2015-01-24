@@ -157,5 +157,23 @@ def main():
     ])
     H1.plot("H1.svg")
 
+    Hcomplete = History([
+        A.p.E(x),
+        B.p.E(y),
+        B.p.Ok(),
+        C.r.E(x),
+        A.p.Ok(),
+        B.q.E(z),
+        A.q.D(),
+        B.q.Ok(),
+        A.q.Ok(z),
+        C.r.Ok(),
+    ])
+    Hcomplete.plot("Hcomplete.svg")
+
+    (H1 | A).plot("H1A.svg")
+    (H1 | B).plot("H1B.svg")
+    (H1 | C).plot("H1C.svg")
+
 if __name__ == "__main__":
     main()
