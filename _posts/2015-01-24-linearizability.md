@@ -307,7 +307,7 @@ histories. Thus, $H\_3$ is not linearizable.
 
 <center>
   <figure>
-    <img src="{{site.url}}/assets/linearizability/H3prime.svg" class="wide-image">
+    <img src="{{site.url}}/assets/linearizability/H3doubleprime.svg" class="wide-image">
     <figcaption>
         Figure 16. $H\_3''$ is not a valid history because $A.p.D()$ returns
         $y$ when $y$ hasn't even been enqueued yet!
