@@ -198,5 +198,21 @@ def main():
     (H2 | B).plot("H2B.svg")
     (H2 | C).plot("H2C.svg")
 
+    H1prime = History([
+        A.p.E(x),
+        B.p.E(y),
+        B.p.Ok(),
+        C.r.E(x),
+        A.p.Ok(),
+        B.q.E(z),
+        A.q.D(),
+        B.q.Ok(),
+        A.q.Ok(z),
+        C.r.Ok(),
+        C.r.E(y),
+        C.r.Ok(),
+    ])
+    H1prime.plot("H1prime.svg")
+
 if __name__ == "__main__":
     main()
