@@ -214,5 +214,21 @@ def main():
     ])
     H1prime.plot("H1prime.svg")
 
+    S1 = History([
+        A.p.E(x),
+        A.p.Ok(),
+        B.p.E(y),
+        B.p.Ok(),
+        C.r.E(x),
+        C.r.Ok(),
+        B.q.E(z),
+        B.q.Ok(),
+        A.q.D(),
+        A.q.Ok(z),
+        C.r.E(y),
+        C.r.Ok(),
+    ])
+    S1.plot("S1.svg")
+
 if __name__ == "__main__":
     main()
