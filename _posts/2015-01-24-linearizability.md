@@ -289,6 +289,7 @@ Consider $H\_3$ as shown in Figure 14.
   </figure>
 </center>
 
+
 There are two potential linearizations we could form from $H\_3$: $H\_3'$ and
 $H\_3''$ shown in Figure 15 and Figure 16. However, both of these histories
 violate the sequential semantics of the queue $p$ and are therefore invalid
@@ -314,6 +315,36 @@ histories. Thus, $H\_3$ is not linearizable.
   </figure>
 </center>
 
-[paper_linearizability]: http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf
-[paper_clocks]:          http://web.stanford.edu/class/cs240/readings/lamport.pdf
-[blog_clocks]:           http://mwhittaker.github.io/2015/01/20/logical-clocks/
+# Implementation #
+If you're curious how I made all the figures in this article, check out [the
+source code in GitHub][github_linearizability]! Here's a snippet of the code
+that made $H\_1$, $H\_1 | A$, $H\_1 | B$, $H\_1 | C$, $H\_1 | p$, $H\_1 | q$,
+and $H\_1 | r$.
+
+{% highlight python %}
+H1 = History([
+    A.p.E(x),
+    B.p.E(y),
+    B.p.Ok(),
+    C.r.E(x),
+    A.p.Ok(),
+    B.q.E(z),
+    A.q.D(),
+    B.q.Ok(),
+    A.q.Ok(z),
+    C.r.Ok(),
+    C.r.E(y),
+])
+H1.plot("H1.svg")
+(H1 | A).plot("H1A.svg")
+(H1 | B).plot("H1B.svg")
+(H1 | C).plot("H1C.svg")
+(H1 | p).plot("H1p.svg")
+(H1 | q).plot("H1q.svg")
+(H1 | r).plot("H1r.svg")
+{% endhighlight %}
+
+[paper_linearizability]:  http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf
+[paper_clocks]:           http://web.stanford.edu/class/cs240/readings/lamport.pdf
+[blog_clocks]:            http://mwhittaker.github.io/2015/01/20/logical-clocks/
+[github_linearizability]: https://github.com/mwhittaker/linearizability
