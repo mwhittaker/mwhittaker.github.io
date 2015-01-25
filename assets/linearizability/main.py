@@ -230,5 +230,35 @@ def main():
     ])
     S1.plot("S1.svg")
 
+    H3 = History([
+        A.p.E(x),
+        A.p.Ok(),
+        B.p.E(y),
+        A.p.D(),
+        B.p.Ok(),
+        A.D.Ok(y),
+    ])
+    H3.plot("H3.svg")
+
+    H3prime = History([
+        A.p.E(x),
+        A.p.Ok(),
+        B.p.E(y),
+        B.p.Ok(),
+        A.p.D(),
+        A.D.Ok(y),
+    ])
+    H3prime.plot("H3prime.svg")
+
+    H3doubleprime = History([
+        A.p.E(x),
+        A.p.Ok(),
+        A.p.D(),
+        A.D.Ok(y),
+        B.p.E(y),
+        B.p.Ok(),
+    ])
+    H3doubleprime.plot("H3doubleprime.svg")
+
 if __name__ == "__main__":
     main()
