@@ -1,13 +1,49 @@
----
-layout: default
-title: Blog Posts
----
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Michael Whittaker</title>
+  <link href='style.css' rel='stylesheet'>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+</head>
 
-<div id="home">
-  <h2><i class="fa fa-bookmark"></i> Blog Posts</h2>
-  <ul id="blog-posts" class="posts">
-    {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }} &raquo;</span><a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
-</div>
+<body>
+  <div id=container>
+    <center>
+      <h1 id=name>Michael Whittaker</h1>
+    </center>
+
+    <div id=leftright>
+      <div id=left>
+        <center>
+          <img id=headshot src="headshot.jpg"><br/>
+          <div id=links>
+            <p><a href="https://mwhittaker.github.io/blog">[Blog]</a></p>
+            <p><a href="https://github.com/mwhittaker">[GitHub]</a></p>
+          </div>
+        </center>
+      </div>
+
+      <div id=right>
+        <p>
+        I'm a PhD student at UC Berkeley studying distributed systems and
+        databases under Professor <a href="http://db.cs.berkeley.edu/jmh/">Joe
+        Hellerstein</a> as part of the
+        <a href="https://rise.cs.berkeley.edu/">RISE Lab</a>. I'm currently
+        working on a project called <a
+        href="https://github.com/ucbrise/fluent">Fluent</a> which aims to make
+        writing distributed systems easier.
+        </p>
+
+        <p>
+        As an undergraduate at Cornell University, I researched under
+        Professor <a href="http://www.cs.cornell.edu/~jnfoster/">Nate
+        Foster</a> and worked on a system called
+        <a href="http://www.cs.cornell.edu/~jnfoster/papers/frenetic-felix-sosr16.pdf">Felix</a>
+        which measures network traffic on end hosts by leveraging <a
+        href="http://www.cs.cornell.edu/~jnfoster/papers/frenetic-netkat.pdf">NetKAT</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
