@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OCaml Lists in Rust</title>
+  <link href='/blog/css/style.css' rel='stylesheet'>
+  <link href='style.css' rel='stylesheet'>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div id=header>
+    <a href="/">Michael</a>'s <a href="/blog">Blog</a>
+  </div>
+
+  <div id=container>
+    <h1>OCaml Lists in Rust</h1>
+    <p>
+    [Rust][rust-lang] is a blazingly fast and safe systems programming language
+    which marries low-level programming constructs like
+    [pointers][guide-pointers] and [move semantics][example-move] with
+    high-level programming constructs like [algebraic data
+    types][example-enum], [pattern matching][example-matching], and [type
+    inference][example-inference]. In an effort to learn Rust, I ported
+    [OCaml's List module][ocaml-list] to Rust! You can find **[the
+    code][rust-list-code]** and **[its documentation][rust-list-doc]** on
+    GitHub.
+    </p>
+
+    <p>
+    In this article, I'll walk through the process of implementing the Rust
+    library, and I'll explain a few OCaml and Rust concepts along the way. I'll
+    assume you have some familiarity with Rust, OCaml and OCaml's List module.
+    </p>
+
+# 1. The Type #
+    <p>
+    The first step in porting OCaml's lists to Rust is to decide on a list type
+    for Rust. OCaml's builtin list type is a polymorphic algebraic data type
+    similar to the following.
+    </p>
+
+{% highlight ocaml %}
+type 'a list = Nil | Cons of 'a * 'a list
+{% endhighlight %}
+
+    <p>
+    What does this mean? Well, `type 'a list` declares a new type `'a list`
+    pronounced "alpha list". `'a` is a type variable that can be instantiated
+    with any concrete type. For example, you could instantiate `'a` with `int`
+    and get `int list`'s like `[1; 2; 3]`. Or, you could instantiate `'a` with
+    `int list` to get `int list list`'s like `[[1]; [2; 3]]`!
+    </p>
+
+    <p>
+    Instances of the `'a list` type can take two forms. They can either be
+    `Nil` which represents the empty list, or they can be a `Cons` of an
+    element of type `'a` and an element of type `'a list`. A `Cons` of an
+    element `x` and a list `l` represents the list whose head is `x` and whose
+    tail is `l`. For example, the list `Nil` represents the empty list `[]`,
+    the list `Cons(1, Nil)` represents the list `[1]`, and the list `Cons(1,
+    Cons(2, Cons(3, Nil)))` represents the list `[1; 2; 3]`.
+    </p>
+
+$$
+\texttt{Cons(}\underbrace{\texttt{1}}\_{\text{head}}\texttt{,} \underbrace{\texttt{Cons(2, Cons(3, Nil))}}\_{\text{tail}} \texttt{)}
+$$
+
+    <p>
+    Now that we've got OCaml's list type sorted out, how do we represent this
+    type in Rust? Since Rust has polymorphic algebraic data types too, it
+    should be easy! Here's our first attempt.
+    </p>
+
+{% highlight rust %}
+enum List<A> {
+    Nil,
+    Cons(A, List<A>)
+}
+{% endhighlight %}
+
+    <p>
+    Pretty similar, huh? Here, `List<A>` takes the place of `'a list`. `A`,
+      like `'a`, is a type variable that can be instantiated with concrete
+      types (an `int list` in OCaml, for example, is a `List<int>` in Rust).
+      And again, lists can take two forms: `Nil` and `Cons`.
+    </p>
+
+    <p>
+    Sounds good, so what happens when we try to compile this?
+    </p>
+
+```
+list.rs:1:1: 4:2 error: illegal recursive enum type; wrap the inner value in a box to make it representable [E0072]
+list.rs:1 enum List<A> {
+list.rs:2     Nil,
+list.rs:3     Cons(A, List<A>)
+list.rs:4 }
+error: aborting due to previous error
+```
+
+    <p>
+    Uh-oh, our code is erroneous; what's going on? Well, OCaml's recursive
+    types allow us to define `'a list` in terms of itself (i.e. `type 'a list =
+      ... | Cons of ... * 'a list`). Rust allows us to do this too, but in
+        order for instances of `List<A>` to have a fixed size, we have to wrap
+          the recursive branches of our algebraic data type in `box`es (in
+          short, a `box` is a unique pointer to data allocated on the heap;
+          more information can be found [elsewhere][example-box]).
+    </p>
+
+With `box`es in mind, we can settle on our Rust list type.
+
+{% highlight rust %}
+enum List<A> {
+    Nil,
+    Cons(A, Box<List<A>>)
+}
+{% endhighlight %}
+
+    <p>
+    `Nil` represents the empty list `[]`. `Cons(1i, box Nil)` represents the
+    singleton list `[1i]`. `Cons(1i, box Cons(2, box Cons(3, box Nil)))`
+    represents the list `[1i, 2, 3]`.
+    </p>
+
+# 2. The Macro #
+    <p>
+    Earlier, I mentioned that the OCaml value `Cons(1, Cons(2, Cons(3, Nil)))`
+    represents the list `[1; 2; 3]`. Luckily, OCaml has sugary syntax and let's
+    us write `[1; 2; 3]` wherever we mean `Cons(1, Cons(2, Cons(3, Nil)))`. It
+    would be nice if we had the same sugar in Rust so that we could write
+    something like `[1i, 2, 3]` wherever we mean `Cons(1i, box Cons(2, box
+    Cons(3, box Nil)))`.  Good news: with [Rust macros][guide-macros], we can!
+    </p>
+
+    <p>
+    What are macros? Well, as programmers we're used to abstracting over values
+    using things like functions. Macros are like functions, but they abstract
+    over syntax rather than values. In reality, macros are rather complicated,
+    so I'll defer an in-depth discussion. For now, just read the following
+    macro.
+    </p>
+
+{% highlight rust %}
+macro_rules! list[
+    ()                       => (Nil);
+    ($x:expr)                => (Cons($x, box Nil));
+    ($x:expr, $($xs:expr),+) => (Cons($x, box list!($($xs),+)));
+];
+{% endhighlight %}
+
+    <p>
+    [The macro][rust-list-macro] lets us write things like `list![]`,
+    `list![1i]`, and `list![1i, 2, 3]` which expand to `Nil`, `Cons(1i, box
+    Nil)`, and `Cons(1i, box Cons(2, box Cons(3, box Nil)))`!
+    </p>
+
+# 3. The Functions #
+    <p>
+    Now that we've ported OCaml's list type and OCaml's syntactic sugar, it's
+    time to port the functions. OCaml's List module defines quite a few
+    functions that Rust includes in its `iter` module (e.g. [`map`][rust-map],
+    [`filter`][rust-filter], [`fold`][rust-fold], [`any`][rust-any],
+    [`all`][rust-all]). I wrote functions to convert our Rust lists
+    [to][rust-list-toiter] and [from][rust-list-fromiter] iterators, so we
+    could take advantage of the `iter` module if we wanted to. However, since
+    the project is mainly pedagogical, I decided to write all of OCaml's List
+    functions from scratch as well.
+    </p>
+
+    <p>
+    I'll walk you through the implementation of two functions,
+    [`fold_left`][rust-list-foldleft] and [`map`][rust-list-map], and let you
+    explore the [other functions][rust-list-listdoc] at your leisure.
+    </p>
+
+## 3.1 `fold_left`'s Type ###
+    <p>
+    First up, let's tackle `fold_left` and its type. In OCaml, `fold_left` has
+    the following type (pronounced "alpha to beta to alpha to alpha to beta
+    list to alpha").
+    </p>
+
+{% highlight ocaml %}
+('a -> 'b -> 'a) -> 'a -> 'b list -> 'a
+{% endhighlight %}
+
+    <p>
+    You can understand this type by thinking of `fold_left` as a function which
+    takes three arguments: `f`, `a`, and `l`.
+    </p>
+
+1. `f` is a *function* of type `('a -> 'b -> 'a)`.
+2. `a` is an *accumulator* and is of type `'a`.
+3. `l` is a *list* and is of type `'b list`.
+
+    <p>
+    `fold_left` evaluates to something of type `'a`.
+    </p>
+
+$$
+\newcommand{\ra}{\rightarrow}
+\underbrace{\texttt{('a $\ra{}$ 'b $\ra{}$ 'a)}}\_{\texttt{f}}
+\ra{}
+\underbrace{\texttt{'a}}\_{\texttt{a}}
+\ra{}
+\underbrace{\texttt{'b list}}\_{\texttt{l}}
+\ra{}
+\underbrace{\texttt{'a}}\_{\texttt{return}}
+$$
+
+## 3.2 `fold_left`'s Semantics ##
+    <p>
+    Now, let's tackle `fold_left`'s semantics. In brief, `fold_left f a [b_1;
+    b_2; ...; b_n]` evaluates to `f (... (f (f a b1) b2) ... ) bn`. First, the
+    function `f` is applied to the accumulator `a` and the first element of the
+    list `b1`.  The result of this application, `f a b1` becomes the new
+    accumulator. Then, `f` is applied to the new accumulator and the second
+    element of the list: `f (f a b1) b2`. This pattern continues until the list
+    is empty at which point the fold evaluates to the accumulator. For example,
+    consider the evaluation of the following fold which computes the sum of a
+    list of integers.
+    </p>
+
+{% highlight ocaml %}
+fold_left (+) 0 [1; 2; 3]
+fold_left (+) ((+) 0 1) [2; 3]
+fold_left (+) (1) [2; 3]
+fold_left (+) ((+) 1 2) [3]
+fold_left (+) (3) [3]
+fold_left (+) ((+) 3 3) []
+fold_left (+) (6) []
+6
+{% endhighlight %}
+
+    <p>
+    Here, `f = (+)`, `a = 0`, and `l = [1; 2; 3]`. You can convince yourself
+    this evaluation is the same as the following.
+    </p>
+
+{% highlight ocaml %}
+(+) ((+) ((+) 0 1) 2) 3
+(+) ((+) 1 2) 3
+(+) 3 3
+6
+{% endhighlight %}
+
+## 3.3 `fold_left`'s Code ##
+    <p>
+    On to the code! Here's [the standard implementation][ocaml-foldleft] of
+    `fold_left` in OCaml.
+    </p>
+
+{% highlight ocaml %}
+let rec fold_left f a l =
+  match l with
+  | [] -> a
+  | head::tail -> fold_left f (f a head) tail
+{% endhighlight %}
+
+    <p>
+    Now, let's port it to Rust! The first thing we'll do is get the function
+    signature compiling but leave the body [unimplemented][rust-unimplemented]
+    for now.
+    </p>
+
+{% highlight rust %}
+impl<A> List<A> {
+    fn fold_left<B>(&self, f: |B, &A| -> B, a: B) -> B {
+        unimplemented!()
+    }
+}
+{% endhighlight %}
+
+    <p>
+    Let's break down what's going on.
+    </p>
+
+- The [`impl` block][example-methods], `impl<A> List<A> {...}`, declares `A` as
+  a type variable and allows us to define methods for expressions of type
+  `List<A>`.
+- `fn fold_left<B>` declares a function `fold_left` and a second type variable `B`.
+- `(&self, f: |B, &A| -> B, a: B)` specifies that `fold_left` takes three
+  arguments.
+    1. `&self` is a reference to an expression of type `List<A>`. OCaml doesn't
+       have any notion of pointers or references, but in Rust we have to borrow
+       arguments using references (i.e. `&self` as opposed to `self`) to avoid
+       moving them.  Also, note that when we type something like `list![1i, 2,
+       3].fold_left(f, a)`, Rust converts it to something like
+       `fold_left(&list![1i, 2, 3], f a)`.
+    2. `f` is a closure that takes to arguments of type `B` and `&A` (a reference
+       to something of type `A`) and that output is something of type `B`.
+    3. `a` is our accumulator of type `B`.
+- `-> B` specifies that our function returns something of type `B`.
+
+    <p>
+    This type signature should look very similar to our OCaml type where `A`
+    and `B` are substitutes for `'b` and `'a` respectively. Now, let's add the
+    body.
+    </p>
+
+{% highlight rust %}
+impl<A> List<A> {
+    fn fold_left<B>(&self, f: |B, &A| -> B, a: B) -> B {
+        match *self {
+            Nil => a,
+            Cons(ref x, ref xs) => {
+                let a = f(a, x);
+                xs.fold_left(f, a)
+            }
+        }
+    }
+}
+{% endhighlight %}
+
+    <p>
+    This code should look very similar to our OCaml code. When our list is
+    empty we evaluate to the accumulator. When the list is non-empty, we
+    compute a new accumulator using `f` and then recurse.
+    </p>
+
+    <p>
+    You can [play with `fold_left`](http://is.gd/Yc7NbN") yourself! Just press
+    "evaluate".
+    </p>
+
+<div style="height: 775px; overflow: hidden"><iframe src="http://is.gd/Yc7NbN" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%; height: 1100px;"></iframe></div>
+
+## 3.4 `map` ##
+    <p>
+    Now that we have `fold_left` written, let's write a simpler function,
+    `map`, which has the following type.
+    </p>
+
+{% highlight ocaml %}
+('a -> 'b) -> 'a list -> 'b list
+{% endhighlight %}
+
+    <p>
+    `map f [a1, ..., an]` evaluates to `[f a1, ..., f an]`. For example `map
+    (fun x -> x + 1) [1; 2; 3]` evaluates to `[2; 3; 4]`, and `map (fun x -> x
+    * x) [1; 2; 3]` evaluates to `[1; 4; 9]`.
+    </p>
+
+    <p>
+    What's neat about `map` is that we can implement it using `fold_left` (and
+    a function `reved` which reverses a list)!
+    </p>
+
+{% highlight rust %}
+impl<A> List<A> {
+    fn map<B>(&self, f: |&A| -> B) -> List<B> {
+        self.fold_left(|l, x| Cons(f(x), box l), list![]).reved()
+    }
+}
+{% endhighlight %}
+
+    <p>
+    You can [play with map](http://is.gd/MJgLdO) too!
+    </p>
+
+<div style="height: 775px; overflow: hidden"><iframe src="http://is.gd/MJgLdO" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%; height: 1100px;"></iframe></div>
+
+## 3.5 Adding Lifetimes ##
+    <p>
+    So far, so good. We've written `fold_left` and used it to implement `map`.
+    Now, let's experiment with `map` to make sure it works how we think it
+    should.  First, let's create a list of integers `xs`. Then, we'll map the
+    identity function `|x| x` across the list. Since `map` expects a function
+    of type `|&A| -> B`, this should create a list of int references
+    (`List<&int>`) from `xs`.
+    </p>
+
+{% highlight rust %}
+fn main() {
+    let xs: List<int> = list![1i, 2, 3];
+    let ys: List<&int> = xs.map(|x| x);
+    println!("xs = {}", xs);
+    println!("ys = {}", ys);
+}
+{% endhighlight %}
+
+    <p>
+    So what happens when we [run this program](http://is.gd/sMUCqs)? Well,
+    click "evaluate" and see for yourself.
+    </p>
+
+<div style="height: 1050px; overflow: hidden"><iframe src="http://is.gd/sMUCqs" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%; height: 1100px;"></iframe></div>
+
+    <p>
+    That's a beefy error message.
+    </p>
+
+```
+<anon>:69:37: 69:38 error: cannot infer an appropriate lifetime due to conflicting requirements
+<anon>:69     let ys: List<&int> = xs.map(|x| x);
+                                              ^
+<anon>:69:37: 69:38 note: first, the lifetime cannot outlive an anonymous lifetime defined on the block at 69:36...
+<anon>:69     let ys: List<&int> = xs.map(|x| x);
+                                              ^
+<anon>:69:37: 69:38 note: ...so that expression is assignable (expected `&int`, found `&int`)
+<anon>:69     let ys: List<&int> = xs.map(|x| x);
+                                              ^
+<anon>:69:26: 69:39 note: but, the lifetime must be valid for the method call at 69:25...
+<anon>:69     let ys: List<&int> = xs.map(|x| x);
+                                   ^~~~~~~~~~~~~
+<anon>:69:26: 69:39 note: ...so that the declared lifetime parameter bounds are satisfied
+<anon>:69     let ys: List<&int> = xs.map(|x| x);
+                                   ^~~~~~~~~~~~~
+error: aborting due to previous error
+playpen: application terminated with error code 101
+Program ended.
+```
+
+    <p>
+    So what's going on here? Well, the compiler is telling us that it can't
+    infer a proper lifetime. It says the lifetime of `x` is limited to the
+    lifetime of the closure `|x| x`, but we want the lifetime of `x` to be the
+    same as the lifetime of `xs`.
+    </p>
+
+    <p>
+    Wow.
+    </p>
+
+    <p>
+    That's an interesting bug that you won't find in pretty much any other
+    programming language besides Rust and one that I admittedly didn't even
+    know existed until I had written a fairly large chunk of the code. I'll
+    again defer an in-depth explanation to [elsewhere][example-lifetime], but
+    I'll show you the fix: we just have to explicitly annotate the lifetimes of
+    our references.
+    </p>
+
+{% highlight rust %}
+impl<'a, A> List<A> {
+    fn fold_left<B>(&'a self, f: |B, &'a A| -> B, a: B) -> B {
+        match *self {
+            Nil => a,
+            Cons(ref x, ref xs) => {
+                let a = f(a, x);
+                xs.fold_left(f, a)
+            }
+        }
+    }
+
+    fn map<B>(&'a self, f: |&'a A| -> B) -> List<B> {
+        self.fold_left(|l, x| Cons(f(x), box l), list![]).reved()
+    }
+}
+{% endhighlight %}
+
+    <p>
+    After this, our code [compiles and runs](http://is.gd/bQA5ld) how we
+    expect!
+    </p>
+
+<div style="height: 775px; overflow: hidden"><iframe src="http://is.gd/bQA5ld" frameborder="0" border="0" cellspacing="0" style="border-style: none;width: 100%; height: 1100px;"></iframe></div>
+
+# 4. Final Thoughts #
+    <p>
+    Porting OCaml's List module to Rust was not without some head scratching.
+    Rust is a complicated beast, and on more than one occasion I found myself
+    staring at the code I just wrote wondering how in the world it worked.
+    Frankly, I still don't know how some of the code works (e.g. some
+    `mem::replace` wizardry I needed to use to implement `into_iter`). However,
+    along with the head scratching came plenty of "Aha!" moments which made the
+    experience awesome!  Rust's concepts of ownership and borrowing were new to
+    me and made me think about programming in a new way. Rust is definitely
+    awesome, and I can't wait to keep learning more about it!
+    </p>
+
+[rust-list-code]:     http://github.com/mwhittaker/rust-list
+[rust-list-doc]:      http://mwhittaker.github.io/rust-list/list/index.html
+[rust-list-listdoc]:  http://mwhittaker.github.io/rust-list/list/enum.List.html
+[rust-list-macro]:    http://mwhittaker.github.io/rust-list/list/macro.list!.html
+[rust-list-toiter]:   http://mwhittaker.github.io/rust-list/list/enum.List.html#method.to_iter
+[rust-list-fromiter]: http://mwhittaker.github.io/rust-list/list/enum.List.html#method.from_iter
+[rust-list-map]:      http://mwhittaker.github.io/rust-list/list/enum.List.html#method.map
+[rust-list-foldleft]: http://mwhittaker.github.io/rust-list/list/enum.List.html#method.fold_left
+[rust-lang]:          http://www.rust-lang.org/
+[rust-unimplemented]: http://doc.rust-lang.org/std/macro.unimplemented!.html
+[rust-trains]:        http://blog.rust-lang.org/2014/12/12/1.0-Timeline.html
+[guide-pointers]:     http://doc.rust-lang.org/guide-pointers.html
+[guide-macros]:       http://doc.rust-lang.org/guide-macros.html
+[example-move]:       http://rustbyexample.com/move.html
+[example-enum]:       http://rustbyexample.com/enum.html
+[example-matching]:   http://rustbyexample.com/match.html
+[example-inference]:  http://rustbyexample.com/type/inference.html
+[example-box]:        http://rustbyexample.com/box.html
+[example-methods]:    http://rustbyexample.com/methods.html
+[example-lifetime]:   http://rustbyexample.com/lifetime.html
+[ocaml-list]:         http://caml.inria.fr/pub/docs/old-311/libref/List.html
+[rust-map]:           http://doc.rust-lang.org/std/iter/trait.IteratorExt.html#tymethod.map
+[rust-filter]:        http://doc.rust-lang.org/std/iter/trait.IteratorExt.html#tymethod.filter
+[rust-fold]:          http://doc.rust-lang.org/std/iter/trait.IteratorExt.html#tymethod.fold
+[rust-all]:           http://doc.rust-lang.org/std/iter/trait.IteratorExt.html#tymethod.all
+[rust-any]:           http://doc.rust-lang.org/std/iter/trait.IteratorExt.html#tymethod.any
+[ocaml-foldleft]:     https://github.com/ocaml/ocaml/blob/trunk/stdlib/list.ml#L81-84
+  </div>
+
+  <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+</body>
+</html>
+```
