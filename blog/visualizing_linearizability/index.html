@@ -3,6 +3,7 @@
 <head>
   <title>Visualizing Linearizability</title>
   <link href='/blog/css/style.css' rel='stylesheet'>
+  <link href='/blog/css/default_highlight.css' rel='stylesheet'>
   <link href='style.css' rel='stylesheet'>
   <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
@@ -16,11 +17,12 @@
     <h1>Visualizing Linearizability</h1>
 
     <p>
-    In [Time, Clocks, and the Ordering of Events in a Distributed
-    System][paper_clocks], Leslie Lamport uses space-time diagrams (like the
-    one in Figure 1) to help the reader form an intuition about the partial
-    ordering of events in a distributed system. In [Linearizability: A
-    Correctness Condition for Concurrent Objects][paper_linearizability],
+    In
+    <a href="http://web.stanford.edu/class/cs240/readings/lamport.pdf">Time, Clocks, and the Ordering of Events in a Distributed System</a>,
+    Leslie Lamport uses space-time diagrams (like the one in Figure 1) to help
+    the reader form an intuition about the partial
+    ordering of events in a distributed system. In
+    <a href="http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf">Linearizability: A Correctness Condition for Concurrent Objects</a>,
     Maurice Herlihy and Jeannette Wing also use diagrams to explain
     linearizability. However, Herlihy and Wing introduce a lot of definitions
     without explaining their intuitive graphical interpretation. In this
@@ -38,88 +40,95 @@
 
     <h1>Basic Definitions</h1>
     <p>
-    Herlihy and Wing's system is composed of *processes* which represent
-    independent sequential threads of execution. Intuitively, a process could be a
-    thread in a process or a process on a computer. We use capital letters like
-    $A$, $B$, and $C$ to range over processes.
+    Herlihy and Wing's system is composed of <strong>processes</strong> which
+    represent independent sequential threads of execution. Intuitively, a
+    process could be a thread in a process or a process on a computer. We use
+    capital letters like $A$, $B$, and $C$ to range over processes.
     </p>
 
     <p>
-    The system also has *objects* which represent the objects you're familiar
-    with from object oriented programming languages. For example, an object
-    could be an `ArrayList` in Java, a `vector` in C++, or a `list` in Python.
-    We use lowercase letters like $p$ and $q$ to range over objects.
+    The system also has <strong>objects</strong> which represent the objects
+    you're familiar with from object oriented programming languages. For
+    example, an object could be an <code>ArrayList</code> in Java, a
+    <code>vector</code> in C++, or a <code>list</code> in Python.  We use
+    lowercase letters like $p$ and $q$ to range over objects.
     </p>
 
     <p>
-    These objects also have *methods*. Method invocations are divided into two
-    distinct parts: the *invocation* and the *response*. In programming
-    languages like C++, you only see the invocation like `v.push_back(x)`, but
-    in our system, there is an invocation $q.Enqueue(x)$ and a response
-    $q.Ok()$. You can think of the response as the return status of a method.
-    We use lowercase letters like $x$ and $y$ to range over arguments to
-    methods.
+    These objects also have <strong>methods</strong>. Method invocations are
+    divided into two distinct parts: the <strong>invocation</strong> and the
+    <strong>response</strong>. In programming languages like C++, you only see
+    the invocation like <code>v.push_back(x)</code>, but in our system, there
+    is an invocation $q.Enqueue(x)$ and a response $q.Ok()$. You can think of
+    the response as the return status of a method.  We use lowercase letters
+    like $x$ and $y$ to range over arguments to methods.
     </p>
 
     <p>
-    An *event* is a three tuple of an object, an invocation or response, and a
-    process. You can read the event $(q, Enqueue(x), A)$ as "Process $A$
-    performs $q.Enqueue(x)$" where $q$ is a queue and $Enqueue(x)$ enqueues $x$
-    onto $q$.  For convenience, I'll denote such an event as $A.q.Enqueue(x)$,
-    or $q.Enqueue(x)$ if the invoking process is obvious from context.
+    An <strong>event</strong> is a three tuple of an object, an invocation or
+    response, and a process. You can read the event $(q, Enqueue(x), A)$ as
+    "Process $A$ performs $q.Enqueue(x)$" where $q$ is a queue and $Enqueue(x)$
+    enqueues $x$ onto $q$.  For convenience, I'll denote such an event as
+    $A.q.Enqueue(x)$, or $q.Enqueue(x)$ if the invoking process is obvious from
+    context.
     </p>
 
     <p>
-    A *history* is a finite sequence of events. All of the following are
-    histories.  Here, $E$ and $D$ are abbreviations for $Enqueue$ and
-    $Dequeue$.
+    A <strong>history</strong> is a finite sequence of events. All of the
+    following are histories.  Here, $E$ and $D$ are abbreviations for $Enqueue$
+    and $Dequeue$.
     </p>
 
-- $[]$
-- $[A.p.E(x), A.p.Ok()]$
-- $[A.p.E(x), B.p.D(), B.p.Ok(x)]$
-- $[A.p.E(x), A.p.Ok(), B.p.E(y), A.p.D(), B.p.Ok(), A.p.Ok(y)]$
+    <ul>
+      <li>$[$$]$</li>
+      <li>$[$$A.p.E(x)$, $A.p.Ok()$$]$</li>
+      <li>$[$$A.p.E(x)$, $B.p.D()$, $B.p.Ok(x)$$]$</li>
+      <li>$[$$A.p.E(x)$, $A.p.Ok()$, $B.p.E(y)$, $A.p.D()$, $B.p.Ok()$, $A.p.Ok(y)$$]$</li>
+    </ul>
 
     <p>
-    A history is *sequential* if it begins with an invocation and alternates
-    between invocations and responses. For example, $[A.p.E(x), A.p.Ok()]$ and
-    $[A.p.E(x). A.p.Ok(), A.p.E(y)]$ are both sequential while $[A.p.E(x),
-    A.p.E(x)]$ and $A.p.E(x), A.p.Ok(), A.p.Ok()$ are not.
+    A history is <strong>sequential</strong> if it begins with an invocation
+    and alternates between invocations and responses. For example, $[A.p.E(x),
+    A.p.Ok()]$ and $[A.p.E(x). A.p.Ok(), A.p.E(y)]$ are both sequential while
+    $[A.p.E(x), A.p.E(x)]$ and $A.p.E(x), A.p.Ok(), A.p.Ok()$ are not.
     </p>
 
     <p>
-    An invocation is *pending* in a sequential history if it has no subsequent
-    matching response. If an invocation does have a subsequent matching
-    response, the pair of events is called an *operation*.
+    An invocation is <strong>pending</strong> in a sequential history if it has
+    no subsequent matching response. If an invocation does have a subsequent
+    matching response, the pair of events is called an
+    <strong>operation</strong>.
     </p>
 
     <h2>Now with Pictures
     </h2>
     <p>
     Now we know enough definitions to introduce some pictures. Let's consider
-    the following history which we'll denote $H\_1$.
+    the following history which we'll denote $H_1$.
     </p>
 
-- $A.p.E(x)$
-- $B.p.E(y)$
-- $B.p.Ok()$
-- $C.r.E(x)$
-- $A.p.Ok()$
-- $B.q.E(z)$
-- $A.q.D()$
-- $B.q.Ok()$
-- $A.q.Ok(z)$
-- $C.r.Ok()$
-- $C.r.E(y)$
+    <ul>
+      <li>$A.p.E(x)$</li>
+      <li>$B.p.E(y)$</li>
+      <li>$B.p.Ok()$</li>
+      <li>$C.r.E(x)$</li>
+      <li>$A.p.Ok()$</li>
+      <li>$B.q.E(z)$</li>
+      <li>$A.q.D()$</li>
+      <li>$B.q.Ok()$</li>
+      <li>$A.q.Ok(z)$</li>
+      <li>$C.r.Ok()$</li>
+      <li>$C.r.E(y)$</li>
+    </ul>
 
     <p>
-    We can represent $H\_1$ graphically with Figure 2.
+    We can represent $H_1$ graphically with Figure 2.
     </p>
 
     <center>
       <figure>
         <img src="assets/H1.svg" class="wide-image">
-        <figcaption> Figure 2. $H\_1$ </figcaption>
+        <figcaption> Figure 2. $H_1$ </figcaption>
       </figure>
     </center>
 
@@ -135,114 +144,120 @@
     <p>
     The history $complete(H)$ of a history $H$ is the maximal subsequence of
     $H$ without pending invocations. Graphically, $complete(H)$ erases all
-    pending requests. For example $complete(H\_1)$ is given in Figure 3.
+    pending requests. For example $complete(H_1)$ is given in Figure 3.
     </p>
 
     <center>
       <figure>
         <img src="assets/Hcomplete.svg" class="wide-image">
-        <figcaption> Figure 3. $complete(H\_1)$ </figcaption>
+        <figcaption> Figure 3. $complete(H_1)$ </figcaption>
       </figure>
     </center>
 
     <p>
     $H | A$ is the subsequence of $H$ of all events invoked by $A$.
     Graphically, in $H | A$ we erase all the events that don't fall on process
-    $A$'s axis. $H\_1 | A$, $H\_1 | B$, and $H\_1 | C$ are given in Figure 4 -
+    $A$'s axis. $H_1 | A$, $H_1 | B$, and $H_1 | C$ are given in Figure 4 -
     Figure 6.
     </p>
 
     <center>
       <figure>
         <img src="assets/H1A.svg" class="wide-image">
-        <figcaption> Figure 4. $H\_1 | A$ </figcaption>
+        <figcaption> Figure 4. $H_1 | A$ </figcaption>
       </figure>
     </center>
 
     <center>
       <figure>
         <img src="assets/H1B.svg" class="wide-image">
-        <figcaption> Figure 5. $H\_1 | B$ </figcaption>
+        <figcaption> Figure 5. $H_1 | B$ </figcaption>
       </figure>
     </center>
 
     <center>
       <figure>
         <img src="assets/H1C.svg" class="wide-image">
-        <figcaption> Figure 6. $H\_1 | C$ </figcaption>
+        <figcaption> Figure 6. $H_1 | C$ </figcaption>
       </figure>
     </center>
 
     <p>
     Similarly, $H|p$ is the subsequence of $H$ of all all events invoked on
-    $p$.  Graphically, in $H | p$, we erase all the events that aren't the same
-    color as $p$. For example, $H\_1 | p$, $H\_1 | q$, and $H\_1 | r$ are given
+    $p$. Graphically, in $H | p$, we erase all the events that aren't the same
+    color as $p$. For example, $H_1 | p$, $H_1 | q$, and $H_1 | r$ are given
     in Figure 7 - Figure 9.
     </p>
 
     <center>
       <figure>
         <img src="assets/H1p.svg" class="wide-image">
-        <figcaption> Figure 7. $H\_1 | p$ </figcaption>
+        <figcaption> Figure 7. $H_1 | p$ </figcaption>
       </figure>
     </center>
 
     <center>
       <figure>
         <img src="assets/H1q.svg" class="wide-image">
-        <figcaption> Figure 8. $H\_1 | q$ </figcaption>
+        <figcaption> Figure 8. $H_1 | q$ </figcaption>
       </figure>
     </center>
 
     <center>
       <figure>
         <img src="assets/H1r.svg" class="wide-image">
-        <figcaption> Figure 9. $H\_1 | r$ </figcaption>
+        <figcaption> Figure 9. $H_1 | r$ </figcaption>
       </figure>
     </center>
 
     <h2>Equivalence</h2>
     <p>
-    Two histories $H$ and $H'$ are said to be *equivalent* if they satisfy the
-    following property.
+    Two histories $H$ and $H'$ are said to be <strong>equivalent</strong> if
+    they satisfy the following property.
     </p>
 
-$$
-\forall P.\, H|P = H'|P
-$$
+    <center>
+      \(
+      \forall P.\, H|P = H'|P
+      \)
+    </center>
 
     <p>
     Graphically, two histories are considered equivalent if all of their
     corresponding process axes are pairwise equivalent. Recall that a process'
     axis is a subsequence, so two axes are equivalent if they contain the same
     events in the same order. The placement of the events is not important.
-    Take for example $H\_2$:
+    Take for example $H_2$:
     </p>
 
-- $C.r.E(x)$
-- $B.p.E(y)$
-- $C.r.Ok()$
-- $A.p.E(x)$
-- $A.p.Ok()$
-- $C.r.E(y)$
-- $B.p.Ok()$
-- $B.q.E(z)$
-- $A.q.D()$
-- $B.q.Ok()$
-- $A.q.Ok(z)$
+    <ul>
+      <li>$C.r.E(x)$</li>
+      <li>$B.p.E(y)$</li>
+      <li>$C.r.Ok()$</li>
+      <li>$A.p.E(x)$</li>
+      <li>$A.p.Ok()$</li>
+      <li>$C.r.E(y)$</li>
+      <li>$B.p.Ok()$</li>
+      <li>$B.q.E(z)$</li>
+      <li>$A.q.D()$</li>
+      <li>$B.q.Ok()$</li>
+      <li>$A.q.Ok(z)$</li>
+    </ul>
 
-$H\_2$ is depicted in Figure 10.
+    <p>
+    $H_2$ is depicted in Figure 10.
+    </p>
 
     <center>
       <figure>
         <img src="assets/H2.svg" class="wide-image">
-        <figcaption> Figure 10. $H\_2$ </figcaption>
+        <figcaption> Figure 10. $H_2$ </figcaption>
       </figure>
     </center>
 
     <p>
-    Now, let's look at $H\_1 | P$ and $H\_2 | P$ for $P \in \\{A, B, C\\}$ and
-    see if $H\_1$ and $H\_2$ are equivalent. This is shown in Figure 11 -
+    Now, let's look at $H_1 | P$ and $H_2 | P$ for $P \in \set{A, B, C}$ and
+    see if $H_1$ and $H_2$ are equivalent. This is shown in Figure 11 -
     Figure 13.
     </p>
 
@@ -250,7 +265,7 @@ $H\_2$ is depicted in Figure 10.
       <figure>
         <img src="assets/H1A.svg" class="wide-image">
         <img src="assets/H2A.svg" class="wide-image">
-        <figcaption> Figure 11. $H\_1 | A$ (top) and $H\_2 | A$ (bottom) </figcaption>
+        <figcaption> Figure 11. $H_1 | A$ (top) and $H_2 | A$ (bottom) </figcaption>
       </figure>
     </center>
 
@@ -258,7 +273,7 @@ $H\_2$ is depicted in Figure 10.
       <figure>
         <img src="assets/H1B.svg" class="wide-image">
         <img src="assets/H2B.svg" class="wide-image">
-        <figcaption> Figure 11. $H\_1 | B$ (top) and $H\_2 | B$ (bottom) </figcaption>
+        <figcaption> Figure 11. $H_1 | B$ (top) and $H_2 | B$ (bottom) </figcaption>
       </figure>
     </center>
 
@@ -266,108 +281,122 @@ $H\_2$ is depicted in Figure 10.
       <figure>
         <img src="assets/H1C.svg" class="wide-image">
         <img src="assets/H2C.svg" class="wide-image">
-        <figcaption> Figure 11. $H\_1 | C$ (top) and $H\_2 | C$ (bottom) </figcaption>
+        <figcaption> Figure 11. $H_1 | C$ (top) and $H_2 | C$ (bottom) </figcaption>
       </figure>
     </center>
 
-Since $H\_1 | A$ = $H\_2 | A$, $H\_1 | B$ = $H\_2 | B$, and $H\_1 | C$ = $H\_2
-| C$, $H\_1$ and $H\_2$ are equivalent.
+    <p>
+    Since $H_1 | A$ = $H_2 | A$, $H_1 | B$ = $H_2 | B$, and $H_1 | C$ = $H_2 |
+    C$, $H_1$ and $H_2$ are equivalent.
+    </p>
 
     <h2>Linearizability</h2>
     <p>
     Before we get to linearizability, let's first define an irreflexive partial
     ordering of operations in a history. If you don't know what an irreflexive
-    partial ordering is, [my previous blog on Lamport's Logical
-    Clocks][blog_clocks] explains it in detail. We denote the ordering on $H$
-    as $<\_H$. Two operations $o\_1$ and $o\_2$ are in $<\_H$ (i.e. $o\_1 <
-    o\_2$) if the response of $o\_1$ occurs before the invocation of $o\_2$.
+    partial ordering is,
+    <a href="http://mwhittaker.github.io/2015/01/20/logical-clocks/">my previous blog on Lamport's Logical Clocks</a>
+    explains it in detail. We denote the ordering on $H$
+    as $\lt_H$. Two operations $o_1$ and $o_2$ are in $\lt_H$ (i.e. $o_1 \lt
+    o_2$) if the response of $o_1$ occurs before the invocation of $o_2$.
     </p>
 
     <p>
-    Graphically, this means that $o\_1$ and $o\_2$ do not overlap and that
-    $o\_1$ is to the left of $o\_2$. If the two operations do overlap, they are
+    Graphically, this means that $o_1$ and $o_2$ do not overlap and that
+    $o_1$ is to the left of $o_2$. If the two operations do overlap, they are
     not related. For example in Figure 2, if we let process $A$'s first
-    operation be $A\_1$ and let process $B$'s second operation be $B\_2$, then
-    $A\_1 <\_H B\_2$.  Likewise, $A\_1$ and $B\_1$ are not related.
+    operation be $A_1$ and let process $B$'s second operation be $B_2$, then
+    $A_1 \lt_H B_2$.  Likewise, $A_1$ and $B_1$ are not related.
     </p>
 
     <p>
-    Finally, we can define *linearizability*! A history $H$ is linearizable if
-    we can add response events to the end of it to form a new history $H'$ such
-    that:
+    Finally, we can define <strong>linearizability</strong>! A history $H$ is
+    linearizable if we can add response events to the end of it to form a new
+    history $H'$ such that:
     </p>
 
-1. $complete(H')$ is equivalent to a sequential history $S$, and
-2. $<\_H \subseteq <\_S$
+    <ol>
+      <li>$complete(H')$ is equivalent to a sequential history $S$, and</li>
+      <li>$\lt_H \subseteq \lt_S$</li>
+    </ol>
 
     <p>
-    We call $S$ a *linearization* of $H$. Graphically, this is how you find a
-    linearization of a history $H$.
+    We call $S$ a <strong>linearization</strong> of $H$. Graphically, this is
+    how you find a linearization of a history $H$.
     </p>
 
-- First, add any necessary response events to the end of the history. This will
-  close any pending events and turn them into operations. This new history is
-  called $H'$.
-- Compute $complete(H')$. The diagram of $complete(H')$ should not contain any
-  ellipses.
-- Slide and shrink events in each process' axis until the history is
-  sequential. You can't slide an event past another event since this violate
-  equivalence. Also, if you are sliding two operations $o\_1$ and $o\_2$ where
-  $o\_1 <\_H o\_2$, then you can't slide $o\_1$ rightward past the start of
-  $o\_2$. This would violate the condition that $<\_H \subseteq <\_S$.
+    <ul>
+      <li>
+      First, add any necessary response events to the end of the history. This
+      will close any pending events and turn them into operations. This new
+      history is called $H'$.
+      </li>
+      <li>
+      Compute $complete(H')$. The diagram of $complete(H')$ should not contain
+      any ellipses.
+      </li>
+      <li>
+      Slide and shrink events in each process' axis until the history is
+      sequential. You can't slide an event past another event since this
+      violate equivalence. Also, if you are sliding two operations $o_1$ and
+      $o_2$ where $o_1 \lt_H o_2$, then you can't slide $o_1$ rightward past
+      the start of $o_2$. This would violate the condition that $\lt_H
+      \subseteq \lt_S$.
+      </li>
+    </ul>
 
     <p>
-    Let's demonstrate this process by showing that $H\_1$ is linearizable.
-    We'll do so by finding a linearization $S\_1$. First, let's extend $H\_1$
-    with a response event for process $C$. Call this new history $H\_1'$.
-    $H\_1'$ is shown in Figure 12.
+    Let's demonstrate this process by showing that $H_1$ is linearizable.
+    We'll do so by finding a linearization $S_1$. First, let's extend $H_1$
+    with a response event for process $C$. Call this new history $H_1'$.
+    $H_1'$ is shown in Figure 12.
     </p>
 
     <center>
       <figure>
         <img src="assets/H1prime.svg" class="wide-image">
-        <figcaption> Figure 12. $H\_1'$ </figcaption>
+        <figcaption> Figure 12. $H_1'$ </figcaption>
       </figure>
     </center>
 
     <p>
-    Now, let's form $S\_1$ which is shown in Figure 13. If you compare $H\_1' |
-    P$ with $S\_1 | P$ for $P \in \\{A, B, C\\}$, you'll see that $S\_1$ and
-    $H\_1'$ are equivalent. Also, $<\_{H\_1} \subseteq <\_{S\_1}$. Thus, $H\_1$
+    Now, let's form $S_1$ which is shown in Figure 13. If you compare $H_1' |
+    P$ with $S_1 | P$ for $P \in \set{A, B, C}$, you'll see that $S_1$ and
+    $H_1'$ are equivalent. Also, $\lt_{H_1} \subseteq \lt_{S_1}$. Thus, $H_1$
     is linearizable!
     </p>
 
     <center>
       <figure>
         <img src="assets/S1.svg" class="wide-image">
-        <figcaption> Figure 13. $S\_1$ </figcaption>
+        <figcaption> Figure 13. $S_1$ </figcaption>
       </figure>
     </center>
 
     <p>
     Let's look at one more history and try to figure out if it's linearizable.
-    Consider $H\_3$ as shown in Figure 14.
+    Consider $H_3$ as shown in Figure 14.
     </p>
 
     <center>
       <figure>
         <img src="assets/H3.svg" class="wide-image">
-        <figcaption> Figure 14. $H\_3$ </figcaption>
+        <figcaption> Figure 14. $H_3$ </figcaption>
       </figure>
     </center>
 
     <p>
-    There are two potential linearizations we could form from $H\_3$: $H\_3'$
-    and $H\_3''$ shown in Figure 15 and Figure 16. However, both of these
+    There are two potential linearizations we could form from $H_3$: $H_3'$
+    and $H_3''$ shown in Figure 15 and Figure 16. However, both of these
     histories violate the sequential semantics of the queue $p$ and are
-    therefore invalid histories. Thus, $H\_3$ is not linearizable.
+    therefore invalid histories. Thus, $H_3$ is not linearizable.
     </p>
 
     <center>
       <figure>
         <img src="assets/H3prime.svg" class="wide-image">
         <figcaption>
-        Figure 15. $H\_3'$ is not a valid history because $A.p.D()$ should
+        Figure 15. $H_3'$ is not a valid history because $A.p.D()$ should
         return $x$ since it was enqueued first.
         </figcaption>
       </figure>
@@ -377,7 +406,7 @@ Since $H\_1 | A$ = $H\_2 | A$, $H\_1 | B$ = $H\_2 | B$, and $H\_1 | C$ = $H\_2
       <figure>
         <img src="assets/H3doubleprime.svg" class="wide-image">
         <figcaption>
-        Figure 16. $H\_3''$ is not a valid history because $A.p.D()$ returns
+        Figure 16. $H_3''$ is not a valid history because $A.p.D()$ returns
         $y$ when $y$ hasn't even been enqueued yet!
         </figcaption>
       </figure>
@@ -386,40 +415,34 @@ Since $H\_1 | A$ = $H\_2 | A$, $H\_1 | B$ = $H\_2 | B$, and $H\_1 | C$ = $H\_2
     <h2>Implementation</h2>
     <p>
     If you're curious how I made all the figures in this article, check out
-    [the source code in GitHub][github_linearizability]! Here's a snippet of
-    the code that made $H\_1$, $H\_1 | A$, $H\_1 | B$, $H\_1 | C$, $H\_1 | p$,
-    $H\_1 | q$, and $H\_1 | r$.
+    <a href="https://github.com/mwhittaker/linearizability">the source code in GitHub</a>!
+    Here's a snippet of the code that made $H_1$, $H_1 | A$, $H_1 | B$, $H_1 |
+    C$, $H_1 | p$, $H_1 | q$, and $H_1 | r$.
     </p>
 
-{% highlight python %}
-H1 = History([
-    A.p.E(x),
-    B.p.E(y),
-    B.p.Ok(),
-    C.r.E(x),
-    A.p.Ok(),
-    B.q.E(z),
-    A.q.D(),
-    B.q.Ok(),
-    A.q.Ok(z),
-    C.r.Ok(),
-    C.r.E(y),
-])
-H1.plot("H1.svg")
-(H1 | A).plot("H1A.svg")
-(H1 | B).plot("H1B.svg")
-(H1 | C).plot("H1C.svg")
-(H1 | p).plot("H1p.svg")
-(H1 | q).plot("H1q.svg")
-(H1 | r).plot("H1r.svg")
-{% endhighlight %}
-
-[paper_linearizability]:  http://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf
-[paper_clocks]:           http://web.stanford.edu/class/cs240/readings/lamport.pdf
-[blog_clocks]:            http://mwhittaker.github.io/2015/01/20/logical-clocks/
-[github_linearizability]: https://github.com/mwhittaker/linearizability
+    <pre><code class="python">  H1 = History([
+      A.p.E(x),
+      B.p.E(y),
+      B.p.Ok(),
+      C.r.E(x),
+      A.p.Ok(),
+      B.q.E(z),
+      A.q.D(),
+      B.q.Ok(),
+      A.q.Ok(z),
+      C.r.Ok(),
+      C.r.E(y),
+  ])
+  H1.plot("H1.svg")
+  (H1 | A).plot("H1A.svg")
+  (H1 | B).plot("H1B.svg")
+  (H1 | C).plot("H1C.svg")
+  (H1 | p).plot("H1p.svg")
+  (H1 | q).plot("H1q.svg")
+  (H1 | r).plot("H1r.svg")</code></pre>
   </div>
 
+  <script type="text/javascript" src="/blog/js/highlight.pack.js"></script>
   <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
   <script type="text/javascript" async
     src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
