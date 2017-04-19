@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\und}{\underline{\phantom{\ \ }}}
+
+\begin{document}
+\begin{center}
+  \Huge The Two Generals Problem
+\end{center}
+
+\section{Formalism}
+A \textbf{two generals protocol} $P$ is a five-tuple $(M, A, f_A, B, f_B)$
+where
+\begin{itemize}
+  \item
+    $M$ is a finite set of messages with distinguished messages $0, 1, \bot \in
+    M$;
+  \item
+    $A$ is a finite set of general $A$'s states with a distinguished start
+    state $a_0 \in A$ and two distinguished final states $0, 1 \in A$;
+  \item
+    $f_A: Q_A \times M \to Q_A \times M$ is general $A$'s transition function
+    with the restriction that $f(0, \und) = (0, \bot)$ and $f(1, \und) = (1,
+    \bot)$; and
+  \item
+    $B$ and $f_B$ are defined symmetrically for general $B$.
+\end{itemize}
+
+A \textbf{configuration} is a tuple $(a, m, b, n) \in A \times M \times B
+\times M$. Next, we define the \textbf{single step relation} $\to$.
+Consider an arbitrary configuration $(a, m, b, n)$ and let $(a', n') = f_A(a,
+m)$ and $(b', m') = f_B(b, n)$.
+\[
+  (a, m, b, n) \to (a'', m'', b'', n'')
+    \iff
+  a'' = a' \land b'' = b' \land m'' \in \set{m', \bot} \land n'' \in \set{n', \bot}
+\]
+
+\newcommand{\startzero}{(a_0, 0, b_0, 0)}
+\newcommand{\startone}{(a_0, 1, b_0, 1)}
+\newcommand{\agreezero}{(0, \bot, 0, \bot)}
+\newcommand{\agreeone}{(1, \bot, 1, \bot)}
+Let $\to^*$, the \textbf{multistep relation}, be the transitive closure of
+$\to$. The two generals problem asks whether there exists a protocol $P$ such
+that
+\begin{itemize}
+  \item
+    any initial configuration $\set{a_0} \times \set{0, 1} \times \set{b_0}
+    \times \set{0, 1}$ will \emph{always} multistep to $\agreezero$ or
+    $\agreeone$; and
+  \item
+    if no messages are lost, then $\startzero$ will multistep to $\agreezero$
+    and $\startone$ will multistep to $\agreeone$.
+\end{itemize}
+
+\section{Proof}
+\newcommand{\conf}[4]{%
+  % \begin{tabular}{|c|c|}
+    % \hline
+    % $#1$ & $#2$ \\\hline
+    % $#3$ & $#4$ \\\hline
+  % \end{tabular}%
+  \tikzstyle{box}=[draw, inner sep=0pt, minimum width=0.6cm, minimum height=0.6cm]
+  \begin{tikzpicture}[scale=0.6, baseline=(o.center)]
+    \node (o) at (0.5, 0.5) {};
+    \node[box, fill=red!7]  at (0, 1) {$#1$};
+    \node[box, fill=red!7]  at (1, 1) {$#2$};
+    \node[box, fill=blue!7] at (0, 0) {$#3$};
+    \node[box, fill=blue!7] at (1, 0) {$#4$};
+  \end{tikzpicture}
+}
+
+Assume for contradiction there exists a protocol $P$ which solves the two
+generals problem. We create a chain of executions each of which
+indistinguishable from the last for either general $A$ or general $B$.
+%
+\begin{align*}
+  \conf{a_0 }{1   }{b_0 }{1   } \to
+  \conf{a_1 }{m_1 }{b_1 }{n_1 } \to
+  \conf{1   }{\bot}{b_2 }{n_2 } \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{1   }{b_0 }{1   } \to
+  \conf{a_1 }{m_1 }{b_1 }{n_1 } \to
+  \conf{1   }{\bot}{b_2 }{\bot} \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{1   }{b_0 }{1   } \to
+  \conf{a_1 }{\bot}{b_1 }{n_1 } \to
+  \conf{a_2 }{\bot}{b_2 }{\bot} \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{1   }{b_0 }{1   } \to
+  \conf{a_1 }{\bot}{b_1 }{\bot} \to
+  \conf{a_2 }{\bot}{b_2'}{\bot} \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{0   }{b_0 }{1   } \to
+  \conf{a_1'}{\bot}{b_1 }{\bot} \to
+  \conf{a_2'}{\bot}{b_2'}{\bot} \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{0   }{b_0 }{0   } \to
+  \conf{a_1'}{\bot}{b_1'}{\bot} \to
+  \conf{a_2'}{\bot}{b_2'}{\bot} \to^*
+  \conf{1   }{\bot}{1   }{\bot} \\
+  %
+  \conf{a_0 }{0   }{b_0  }{0   } \to
+  \conf{a_1'}{\bot}{b_1' }{n_1 } \to
+  \conf{a_2'}{\bot}{b_2''}{\bot} \to^*
+  \conf{1   }{\bot}{1    }{\bot} \\
+  %
+  \conf{a_0  }{0   }{b_0  }{0   } \to
+  \conf{a_1' }{m_1 }{b_1' }{n_1 } \to
+  \conf{a_2''}{\bot}{b_2''}{\bot} \to^*
+  \conf{1    }{\bot}{1    }{\bot} \\
+\end{align*}
+
+\end{document}
