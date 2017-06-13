@@ -4,13 +4,14 @@
 <head>
   <title>TITLE</title>
   <link href='/blog/css/style.css' rel='stylesheet'>
+  <link href='/blog/css/default_highlight.css' rel='stylesheet'>
   <link href='style.css' rel='stylesheet'>
   <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
 
 <body>
   <div id=header>
-    <a href="/">Michael</a>'s <a href="/blog">Blog</a>
+    <a href="/blog">Blog</a>
   </div>
 
   <div id=container>
@@ -18,9 +19,14 @@
     CONTENT
   </div>
 
+  <!-- Syntax highlighting. -->
+  <script type="text/javascript" src="/blog/js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <!-- MathJax. -->
   <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
   <script type="text/javascript" async
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
 </body>
 </html>
