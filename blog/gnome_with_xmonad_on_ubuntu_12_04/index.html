@@ -3,102 +3,128 @@
 <head>
   <title>GNOME with Xmonad on Ubuntu 12.04</title>
   <link href='/blog/css/style.css' rel='stylesheet'>
-  <link href='style.css' rel='stylesheet'>
+  <link href='/blog/css/default_highlight.css' rel='stylesheet'>
   <meta name=viewport content="width=device-width, initial-scale=1">
+
+  <style>
+    img {
+      max-width: 100%;
+    }
+  </style>
 </head>
 
 <body>
   <div id=header>
-    <a href="/">Michael</a>'s <a href="/blog">Blog</a>
+    <a href="/blog">Blog</a>
   </div>
 
   <div id=container>
     <h1>GNOME with Xmonad on Ubuntu 12.04</h1>
-[Xmonad][] is a minimalistic tiling window manager written and configured in
-Haskell. [GNOME][] is a free and popular desktop environment for linux. [GNOME
-with Xmonad][] is a wonderful combination of the two. This tutorial will go
-over how to install and get started using GNOME with Xmonad on Ubuntu 12.04.
 
-# Installing #
-Open up a terminal and install `gnome-panel` and `xmonad`:
+    <p>
+    <a href="http://xmonad.org/">Xmonad</a> is a minimalistic tiling window
+    manager written and configured in Haskell.
+    <a href="http://www.gnome.org/">GNOME</a> is a free and popular desktop
+    environment for linux. <a href="https://goo.gl/Mx5rgJ">GNOME with
+    Xmonad</a> is a wonderful combination of the two. This tutorial will go
+    over how to install and get started using GNOME with Xmonad on Ubuntu
+    12.04.
+    </p>
 
-{% highlight bash %}
-sudo apt-get install gnome-panel xmonad
-{% endhighlight %}
+    <h2>Installing</h2>
+    <p>
+    Open up a terminal and install <code>gnome-panel</code> and
+    <code>xmonad</code>:
+    </p>
 
-Now create the file `~/.xmonad/xmonad.hs` with the following contents:
+    <pre><code class="bash">sudo apt-get install gnome-panel xmonad</pre></code>
 
-{% highlight haskell %}
-import XMonad
+    <p>
+    Now create the file <code>~/.xmonad/xmonad.hs</code> with the following
+    contents:
+    </p>
+
+    <pre><code class="haskell">import XMonad
 import XMonad.Config.Gnome
 
-main = xmonad gnomeConfig
-{% endhighlight %}
+main = xmonad gnomeConfig</code></pre>
 
-That's it!
+    <p>
+    That's it!
+    </p>
 
-Now log out. When you come to the login screen, you'll see a white circle.
+    <p>
+    Now log out. When you come to the login screen, you'll see a white circle.
+    </p>
 
-<center>
-[![white circle](http://i.stack.imgur.com/2mQeW.png)](http://i.stack.imgur.com/2mQeW.png)
-</center>
+    <center>
+      <img src="http://i.stack.imgur.com/2mQeW.png">
+    </center>
 
-Click on the white circle to see a list of your available desktop environments.
-Select "GNOME with Xmonad".
+    <p>
+    Click on the white circle to see a list of your available desktop
+    environments. Select "GNOME with Xmonad".
+    </p>
 
-<center>
-[![desktop menu](http://i.stack.imgur.com/NoL8a.png)](http://i.stack.imgur.com/NoL8a.png)
-</center>
+    <center>
+      <img src="http://i.stack.imgur.com/NoL8a.png">
+    </center>
 
-If all goes well, you should be greeted with an empty GNOME desktop.
+    <p>
+    If all goes well, you should be greeted with an empty GNOME desktop.
+    </p>
 
-<center>
-<a href="assets/desktop.png">
-    <img src="assets/desktop.png" class="wide-image">
-</a>
-</center>
+    <center>
+      <img src="assets/desktop.png">
+    </center>
 
-Press `Alt-Shift-Enter` a couple of times and you should see a bunch of tiled
-terminals.
+    <p>
+    Press <code>Alt-Shift-Enter</code> a couple of times and you should see a
+    bunch of tiled terminals.
+    </p>
 
-<center>
-<a href="assets/terminals.png">
-    <img src="assets/terminals.png" class="wide-image">
-</a>
-</center>
+    <center>
+      <img src="assets/terminals.png">
+    </center>
 
-# Getting Started #
-Now we've gotten GNOME with Xmonad up and running. To get started using your
-new desktop environment, check out the [Xmonad tour][] and refer to this handy
-cheat sheet:
+    <h2>Getting Started</h2>
+    <p>
+    Now we've gotten GNOME with Xmonad up and running. To get started using
+    your new desktop environment, check out the
+    <a href="http://xmonad.org/tour.html">Xmonad tour</a> and refer to this
+    handy cheat sheet:
+    </p>
 
-<center>
-<a href="http://www.haskell.org/wikiupload/b/b8/Xmbindings.png">
-    <img src="http://www.haskell.org/wikiupload/b/b8/Xmbindings.png" class="wide-image">
-</a>
-</center>
+    <center>
+      <img src="http://www.haskell.org/wikiupload/b/b8/Xmbindings.png">
+    </center>
 
-The commands I use most frequently are:
+    <p>
+    The commands I use most frequently are:
+    </p>
 
-{% highlight bash %}
-Alt-Shift-Enter # create new terminal
+    <pre><code class="bash">Alt-Shift-Enter # create new terminal
 Alt-p           # launch application
 Alt-Space       # change window layout
 Alt-Tab         # switch window
-Alt-b           # toggle GNOME menu bar and status bar
-{% endhighlight %}
+Alt-b           # toggle GNOME menu bar and status bar</code></pre>
 
-# Extra: Exploring Files #
-Now that you've gotten situated, you might be wondering where GNOME and Xmonad
-are storing all their configuration files. Let's explore some of these files.
-Then, we'll use what we've learned to add a custom Xmonad icon to the little
-white circle when we select "GNOME with Xmonad" at the login screen.
+    <h2>Extra: Exploring Files</h2>
+    <p>
+    Now that you've gotten situated, you might be wondering where GNOME and
+    Xmonad are storing all their configuration files. Let's explore some of
+    these files.  Then, we'll use what we've learned to add a custom Xmonad
+    icon to the little white circle when we select "GNOME with Xmonad" at the
+    login screen.
+    </p>
 
-First up, head over to `/usr/share/xsessions`. This directory contains the
-files that specify which desktop environments we can select when we log in.
+    <p>
+    First up, head over to <code>/usr/share/xsessions</code>. This directory
+    contains the files that specify which desktop environments we can select
+    when we log in.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/xsessionsλ ls -1
+    <pre><code class="bash">michael@michael:/usr/share/xsessions&#x3bb; ls -1
 gnome-classic.desktop
 gnome.desktop
 gnome-fallback.desktop
@@ -106,65 +132,68 @@ gnome-shell.desktop
 gnome-xmonad.desktop
 ubuntu-2d.desktop
 ubuntu.desktop
-xmonad.desktop
-{% endhighlight %}
+xmonad.desktop</code></pre>
 
-Let's take a look at `gnome-xmonad.desktop`.
+    <p>
+    Let's take a look at <code>gnome-xmonad.desktop</code>.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/xsessionsλ cat gnome-xmonad.desktop
+    <pre><code class="bash">michael@michael:/usr/share/xsessions&#x3bb; cat gnome-xmonad.desktop
 [Desktop Entry]
 Name=GNOME with Xmonad
 Exec=gnome-session-xmonad
 TryExec=gnome-session
 Icon=
-Type=Application
-{% endhighlight %}
+Type=Application</code></pre>
 
-Let's take a peek at the `gnome-session-xmonad` command.
+    <p>
+    Let's take a peek at the <code>gnome-session-xmonad</code> command.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/xsessionsλ which gnome-session-xmonad
+    <pre><code>michael@michael:/usr/share/xsessions&#x3bb; which gnome-session-xmonad
 /usr/bin/gnome-session-xmonad
-
-michael@michael:/usr/share/xsessionsλ cat $(!!)
+michael@michael:/usr/share/xsessions&#x3bb; cat $(!!)
 cat $(which gnome-session-xmonad)
 #! /bin/sh
-exec gnome-session --session xmonad "$@"
-{% endhighlight %}
+exec gnome-session --session xmonad "$@"</code></pre>
 
-So `gnome-xmonad.desktop` executes `gnome-session-xmonad` which in turn calls
-`gnome-session --session xmonad`. So where's the `xmonad` gnome session? It's
-over in `/usr/share/gnome-sessions/sessions`.
+    <p>
+    So <code>gnome-xmonad.desktop</code> executes
+    <code>gnome-session-xmonad</code> which in turn calls <code>gnome-session
+    --session xmonad</code>. So where's the <code>xmonad</code> gnome session?
+    It's over in <code>/usr/share/gnome-sessions/sessions</code>.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/gnome-session/sessionsλ ls -1
+    <pre><code class="bash">michael@michael:/usr/share/gnome-session/sessions&#x3bb; ls -1
 gnome-classic.session
 gnome-fallback.session
 gnome.session
 ubuntu-2d.session
 ubuntu.session
-xmonad.session
-{% endhighlight %}
+xmonad.session</code></pre>
 
-Let's look at `xmonad.session`.
+    <p>
+    Let's look at <code>xmonad.session</code>.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/gnome-session/sessionsλ cat xmonad.session
+    <pre><code class="bash">michael@michael:/usr/share/gnome-session/sessions&#x3bb; cat xmonad.session
 [GNOME Session]
 Name=Xmonad/GNOME
 RequiredComponents=gnome-settings-daemon;gnome-panel;
 RequiredProviders=windowmanager;
-DefaultProvider-windowmanager=xmonad
-{% endhighlight %}
+DefaultProvider-windowmanager=xmonad</code></pre>
 
-Interesting! The line `DefaultProvider-windowmanager=xmonad` sets Xmonad as the
-default window manager.
+    <p>
+    Interesting! The line <code>DefaultProvider-windowmanager=xmonad</code>
+    sets Xmonad as the default window manager.
+    </p>
 
-Well, what about the icons in the little white circle? Those guys are located in `/usr/share/unity-greeter`.
+    <p>
+    Well, what about the icons in the little white circle? Those guys are
+    located in <code>/usr/share/unity-greeter</code>.
+    </p>
 
-{% highlight bash %}
-michael@michael:/usr/share/unity-greeterλ ls -1
+    <pre><code class="bash">michael@michael:/usr/share/unity-greeter&#x3bb; ls -1
 a11y.svg
 arrow_left.png
 arrow_right.png
@@ -175,27 +204,21 @@ logo.png
 message.png
 recovery_console_badge.png
 ubuntu_badge.png
-unknown_badge.png
-{% endhighlight %}
+unknown_badge.png</code></pre>
 
-Run `eog unknown_badge.png` and you'll see the familiar white circle. Head over
-[here][badges] to download some extra badges. Place
-`custom_gnome-xmonad_badge.png` and `custom_xmonad_badge.png` in
-`/usr/share/unity-greeter` and you're good to go! Now, a nice Xmonad icon will
-appear in the little white circle when you log in with "GNOME with Xmonad"!
-
-[Xmonad]:            http://xmonad.org/
-[GNOME]:             http://www.gnome.org/
-[GNOME with Xmonad]: http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome
-[Xmonad tour]:       http://xmonad.org/tour.html
-[askubuntu]:         http://askubuntu.com/questions/323729/xmonad-with-gnome-ubuntu-12-04
-[badges]:            http://gnome-look.org/content/show.php/Additional+badges+for+unity-greeter?content=158764
-
+    <p>
+    Run <code>eog unknown_badge.png</code> and you'll see the familiar white
+    circle. Head over <a href="https://goo.gl/nCd8Dj">here</a> to download some
+    extra badges. Place <code>custom_gnome-xmonad_badge.png</code> and
+    <code>custom_xmonad_badge.png</code> in
+    <code>/usr/share/unity-greeter</code> and you're good to go! Now, a nice
+    Xmonad icon will appear in the little white circle when you log in with
+    "GNOME with Xmonad"!
+    </p>
   </div>
 
-  <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
-  <script type="text/javascript" async
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-  </script>
+  <!-- Syntax highlighting. -->
+  <script type="text/javascript" src="/blog/js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
