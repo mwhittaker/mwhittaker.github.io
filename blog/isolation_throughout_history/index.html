@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Isolation Throughout History</title>
+  <link href='/blog/css/style.css' rel='stylesheet'>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div id=header>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <div id=container>
+    <h1>Isolation Throughout History</h1>
+    <p>
+    Concurrency in a relational database is a bit like coffee. Too little and
+    things run a bit sluggish. Too much and things get a little crazy.
+    Typically, databases offer a range of concurrency options (from decaf to
+    espresso) which all make a particular trade-off between allowing
+    transactions to run more concurrently and guaranteeing that transactions
+    run with fewer anomalies. These various levels of concurrency are called
+    <strong>isolation levels</strong>, and they can be particularly tricky to
+    understand. In fact, they are so tricky that researchers have been trying
+    to define them for over 40 years! In this article, we'll take a walk
+    through time and explore various definitions of isolation from 1977 to
+    2017.
+    </p>
+
+    <h2>1977: Degrees of Consistency</h2>
+    <p>
+    In 1977, Gray et al. took a first stab at defining various isolation levels
+    which they called <strong>degrees of consistency</strong>. Here are the
+    definitions verbatim:
+    </p>
+
+    <ul>
+      <li>
+        <strong>Degree 0:</strong> Transaction $T$ sees degree 0 consistency if
+        <ol type="a">
+          <li>$T$ does not overwrite dirty data of other transactions.</li>
+        </ol>
+      </li>
+
+      <li>
+        <strong>Degree 1:</strong> Transaction $T$ sees degree 1 consistency if
+        <ol type="a">
+          <li>$T$ does not overwrite dirty data of other transactions.</li>
+          <li>$T$ does not commit any writes before EOT.</li>
+        </ol>
+      </li>
+
+      <li>
+        <strong>Degree 2:</strong> Transaction $T$ sees degree 2 consistency if
+        <ol type="a">
+          <li>$T$ does not overwrite dirty data of other transactions.</li>
+          <li>$T$ does not commit any writes before EOT.</li>
+          <li>$T$ does not read dirty data of other transactions.</li>
+        </ol>
+      </li>
+
+      <li>
+        <strong>Degree 3:</strong> Transaction $T$ sees degree 3 consistency if
+        <ol type="a">
+          <li>$T$ does not overwrite dirty data of other transactions.</li>
+          <li>$T$ does not commit any writes before EOT.</li>
+          <li>$T$ does not read dirty data of other transactions.</li>
+          <li>Other transactions do not dirty any data read by $T$ before $T$
+              completes.</li>
+        </ol>
+      </li>
+    </ul>
+
+    <p>
+    Now, let's walk through each degree of consistency, describe it in a bit
+    more detail, and give some intuition as to what kinds of anomalies each
+    degree of consistency prevents.
+    </p>
+
+    <ul>
+      <li>
+        Degree 0 is a bit weird because it assumes that a transaction $T$ can
+        commit a write before $T$ itself commits. This degree is obsolete,
+        since we no longer make this assumption.
+      </li>
+      <li>
+        Degree 1 forbids dirty writes. Once a transaction $T$ <em>writes</em>
+        to $x$, no other transaction can <em>write</em> to $x$ until $T$
+        commits or aborts. Assume we have the invariant $x = y$. Without
+        degree 1 consistency, the invariant could be broken by the following
+        history: $W_1(x=42)$, $W_2(x=9001)$, $W_2(y=9001)$, $W_1(y=42)$.
+      </li>
+      <li>
+        Degree 2 forbids dirty reads. Once a transaction $T$ <em>writes</em> to
+        $x$, no other transaction can <em>read</em> $x$ until $T$ commits or
+        aborts.  Imagine again that we have the invariant $x = y$. In the
+        following history, $T_2$ is able to read an inconsistent state:
+        $W_1(x=42)$, $R_2(x=42)$, $R_2(y=9001)$, $W_1(x=42)$.
+      </li>
+      <li>
+        Degree 3 forbids unrepeatable reads. Once a transaction $T$
+        <em>reads</em> $x$, no other transaction can <em>write</em> to $x$.
+        Without degree 3, the following history could occur in which $T_1$
+        reads different values of $x$: $R_1(x=42)$, $W_2(x=9001)$, $C_2$,
+        $R_1(x=9001)$. Degree 3 may also forbid the phantom problem, but
+        unfortunately its definition is a bit too vague to determine.
+      </li>
+    </ul>
+
+    <p>
+    Note that Gray et al.'s definitions apply to a single transaction, not to a
+    history, but the definitions extend naturally to histories. If all
+    transactions in a history see degree $i$ consistency, then we say the
+    history is degree $i$ consistent.
+    </p>
+
+    <p>
+    Gray et al. also define one locking protocol for every degree of
+    consistency. The degree $i$ locking protocol is guaranteed to only produce
+    histories that are degree $i$ consistent:
+    </p>
+
+    <ul>
+      <li>Degree 0: transactions acquire short-lived write locks.</li>
+      <li>Degree 1: transactions acquire long-lived write locks.</li>
+      <li>Degree 2: transactions acquire long-lived write locks and short-lived
+          read locks.</li>
+      <li>Degree 3: transactions acquire long-lived write locks and long-lived
+          read locks.</li>
+    </ul>
+
+    <h2>1992: ANSI SQL</h2>
+    <p>
+    The 1992 ANSI SQL standard provided their own definitions of various
+    isolation levels. Each isolation level was defined using a set of
+    <strong>phenomena</strong>; stronger isolation levels prevented more
+    phenomena. Like Gray et al.'s 1977 definitions, the ANSI SQL standard's
+    definitions are written in English and expectedly vague.
+    </p>
+
+    <p>
+    Unfortunately, the 1992 ANSI SQL standard
+    <a href="https://goo.gl/NUjW1b">costs a whopping $60</a>, so I can't state
+    the definitions verbatim. However, Berenson et al.'s critique provides a
+    summary of the definitions which I include verbatim here (they may actually
+    be verbatim; I have no way of checking):
+    </p>
+    <ul>
+      <li>
+        <strong>P1 (Dirty Read)</strong>: Transaction $T_1$ modifies a data
+        item. Another transaction $T_2$ then reads that data item before $T_1$
+        performs a <code>COMMIT</code> or <code>ROLLBACK</code>. If $T_1$ then
+        performs a <code>ROLLBACK</code>, $T_2$ has read a data item that was
+        never committed and so never really existed.
+      </li>
+      <li>
+        <strong>P2 (Non-repeatable or Fuzzy Read)</strong>: Transaction $T_1$
+        reads a data item.  Another transaction $T_2$ then modifies or deletes
+        that data item and commits. If $T_1$ then attempts to reread the data
+        item, it receives a modified value or discovers that the data item has
+        been deleted.
+      </li>
+      <li>
+        <strong>P3 (Phantom)</strong>: Transaction $T_1$ reads a set of data
+        items satisfying some <code>&lt;search condition&gt;</code>.
+        Transaction $T_2$ then creates data items that satisfy $T_1$'s
+        <code>&lt;search condition&gt;</code> and commits. If $T_1$ then
+        repeats its read with the same <code>&lt;search condition&gt;</code>,
+        it gets a set of data items different from the first read.
+      </li>
+    </ul>
+
+    <p>
+    The 1992 ANSI SQL standard then defined a set of isolation levels using
+    these phenomena.
+    </p>
+
+    <ul>
+      <li><strong>ANSI READ UNCOMMITTED</strong> histories permit all
+          anomalies.</li>
+      <li><strong>ANSI READ COMMITTED</strong> histories are those without
+          P1.</li>
+      <li><strong>ANSI REPEATABLE READ</strong> histories are those without P1
+          or P2.</li>
+      <li><strong>ANSI ANOMALY SERIALIZABLE</strong> histories are those
+          without P1, P2, or P3.</li>
+    </ul>
+
+    <p>
+    Note that with a pedantic interpretation of these definitions, ANOMALY
+    SERIALIZABLE is not the same as SERIALIZABLE. We'll touch more on this in
+    the next section.
+    </p>
+
+    <h2>1995: A Critique</h2>
+    <h2>2000: Generalized Isolation Levels</h2>
+    <h2>2017: A Client-Centric Specification</h2>
+  </div>
+
+  <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+</body>
+</html>
