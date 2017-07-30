@@ -543,7 +543,99 @@
     </center>
 
     <h2>2000: Generalized Isolation Levels</h2>
+    <p>
+    In 2000, Adya et al. pointed out the limitations of Berenson's et al.'s
+    definitions:
+    </p>
 
+    <h3>The Shortcomings of Berenson et al</h3>
+    <ul>
+      <li>
+        The definitions are overly restrictive. For example, the history
+        $W_1(x)$, $W_2(x)$, $C_1$, $C_2$ is disallowed by P0 even though the
+        history is serializable.
+      </li>
+      <li>
+        The definitions were specific to single-versioned locking protocols.
+        Berenson et al' say things like "P0, P1, P2, and P3 are disguised
+        redefinitions of locking behavior" and that "Snapshot Isolation is a
+        multi-version (MV) method, so single-valued (SV) histories do not
+        properly reflect the temporal operations sequences."
+      </li>
+      <li>
+        The definitions place restrictions on transactions that abort. Some
+        optimistic concurrency control techniques are permissive in what they
+        allow pending transactions to do and make sure to abort them later if
+        it would create an anomaly.
+      </li>
+      <li>
+        The definitions dot not treat predicates very formally.
+      </li>
+    </ul>
+
+    <h3>Database Model</h3>
+    <p>TODO</p>
+
+    <h3>Generalized Isolation Levels</h3>
+    <p>
+    Adya et al.' defined a new set of generalized anomalies:
+    </p>
+
+    <ul>
+      <li>
+        <strong>G0: Write Cycles.</strong> A history $H$ exbits phenomenon G0
+        if DSG($H$) contains a directed cycle consisting entirely of
+        write-dependency edges.
+      </li>
+      <li>
+        <strong>G1a: Aborted Reads.</strong> A history $H$ shows phenomenon G1a
+        if it contains an aborted transaction $T_1$ and a committed transaction
+        $T_2$ such that $T_2$ has read some object (maybe via a predicate)
+        modified by $T_1$.
+      </li>
+      <li>
+        <strong>G1b: Intermediate Reads</strong> A history $H$ shows phenomenon
+        G1b if it contains a committed transaction $T_2$ that has read a
+        version of object $x$ (maybe via a predicate) written by transaction
+        $T_1$ that was not $T_1$'s final modification of $x$.
+      </li>
+      <li>
+        <strong>G1c: Circular Information Flow</strong> A history $H$ exhibits
+        phenomenon G1c if DSG($H$) contains a directed cycle consisting
+        entirely of dependency edges.
+      </li>
+      <li>
+        <strong>G1</strong> A history $H$ exhibits phenomenon G1 if it exhibits
+        G1a, G1b, or G1c.
+      </li>
+      <li>
+        <strong>G2-item: Item Anti-dependency Cycles.</strong> A history $H$
+        exhibits phenomenon G2-item if DSG($H$) contains a directed cycle with
+        one or more item anti-dependency edges.
+      </li>
+      <li>
+        <strong>G2: Anti-dependency Cycles.</strong> A history $H$ exhibits
+        phenomenon G2 if DSG($H$) contains a directed cycle with one or more
+        anti-dependency edges.
+      </li>
+    </ul>
+
+    <p>
+    Adya et al. defines generalized isolation levels using these phenomena:
+    </p>
+
+    <ul>
+      <li><strong>PL-1</strong> proscribes G0.</li>
+      <li><strong>PL-2</strong> proscribes G0 and G1.</li>
+      <li><strong>PL-2.99</strong> proscribes G0, G1, and G2-item.</li>
+      <li><strong>PL-3</strong> proscribes G0, G1, and G2.</li>
+    </ul>
+
+    <p>
+    PL-1, PL-2, PL-2.99, and PL-3 correspond roughly to read uncommitted, read
+    committed, repeatable read, and serializable. In fact, PL-3 provides
+    conflict serializability.
+    </p>
 
     <h2>2017: A Client-Centric Specification</h2>
   </div>
