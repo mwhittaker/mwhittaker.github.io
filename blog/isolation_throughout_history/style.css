@@ -1,0 +1,9 @@
+table {
+  margin-bottom: 1.15em;
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: 2pt;
+  border: 1.25pt solid gray;
+}

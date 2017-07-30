@@ -3,6 +3,7 @@
 <head>
   <title>Isolation Throughout History</title>
   <link href='/blog/css/style.css' rel='stylesheet'>
+  <link href='style.css' rel='stylesheet'>
   <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
 
@@ -394,6 +395,152 @@
     snapshot isolation prevents P0, P1, A2, A3, P4, and A5A. Repeatable read
     prevents P0, P1, P2, P4, A5A, and A5B.
     </p>
+
+    <h3>Summary</h3>
+    <ul>
+      <li>
+        <strong>P0 (Dirty Write)</strong>: $W_1(x)$, $\ldots$, $W_2(x)$,
+        $\ldots$, (($C_1$ or $A_1$) and ($C_2$ or $A_2$)).
+      </li>
+      <li>
+        <strong>A1 (Dirty Read)</strong>: $W_1(x)$, $\ldots$, $R_2(x)$,
+        $\ldots$, ($A_1$ and $C_2$).
+      </li>
+      <li>
+        <strong>A2 (Sneaky Write)</strong>: $R_1(x)$, $\ldots$, $W_2(x)$,
+        $\ldots$, $C_2$, $\ldots$, $R_1(x)$, $\ldots$, $C_1$.
+      </li>
+      <li>
+        <strong>A3 (Phantom)</strong>: $R_1(P)$, $\ldots$, $W_2(y\ \text{in}\
+        P)$, $\ldots$, $C_2$, $\ldots$, $R_1(P)$, $\ldots$, $C_1$.
+      </li>
+      <li>
+        <strong>P1 (Dirty Read)</strong>: $W_1(x)$, $\ldots$, $R_2(x)$,
+        $\ldots$, (($C_1$ or $A_1$) and ($C_2$ or $A_2$)).
+      </li>
+      <li>
+        <strong>P2 (Sneaky Write)</strong>: $R_1(x)$, $\ldots$, $W_2(x)$,
+        $\ldots$, (($C_1$ or $A_1$) and ($C_2$ or $A_2$)).
+      </li>
+      <li>
+        <strong>P3 (Phantom)</strong>: $R_1(P)$, $\ldots$, $W_2(y\ \text{in}\
+        P)$, $\ldots$, (($C_1$ or $A_1$) and ($C_2$ or $A_2$)).
+      </li>
+      <li>
+        <strong>P4 (Lost Update)</strong>: $R_1(x)$, $\ldots$, $W_2(x)$,
+        $\ldots$, $W_1(x)$, $\ldots$, $C_1$.
+      </li>
+      <li>
+        <strong>A5A (Read Skew):</strong> $R_1(x)$, $\ldots$, $W_2(x)$,
+        $\ldots$, $W_2(y)$, $\ldots$, $C_2$, $\ldots$, $R_1(y)$, $\ldots$,
+        ($C_1$ or $A_1$).
+      </li>
+      <li>
+        <strong>A5B (Write Skew):</strong> $R_1(x)$, $\ldots$, $R_1(y)$,
+        $\ldots$, $R_2(x)$, $\ldots$, $R_2(y)$, $\ldots$, $W_1(x)$, $\ldots$,
+        $W_1(y)$, $\ldots$, ($C_1$ and $C_2$).
+      </li>
+    </ul>
+
+    <center>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>P0</th>
+            <th>A0</th>
+            <th>A1</th>
+            <th>A2</th>
+            <th>P0</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P4</th>
+            <th>A5A</th>
+            <th>A5B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>RU</td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+          </tr>
+          <tr>
+            <td>RC</td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+          </tr>
+          <tr>
+            <td>CS</td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+          </tr>
+          <tr>
+            <td>RR</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+          </tr>
+          <tr>
+            <td>SI</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+            <td> </td>
+            <td>x</td>
+            <td>x</td>
+            <td> </td>
+          </tr>
+          <tr>
+            <td>S</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+            <td>x</td>
+          </tr>
+        </tbody>
+      </table>
+    </center>
 
     <h2>2000: Generalized Isolation Levels</h2>
 
