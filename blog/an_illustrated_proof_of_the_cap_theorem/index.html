@@ -3,7 +3,6 @@
 <head>
   <title>An Illustrated Proof of the CAP Theorem</title>
   <link href='/blog/css/style.css' rel='stylesheet'>
-  <link href='style.css' rel='stylesheet'>
   <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
 
@@ -14,175 +13,234 @@
 
   <div id=container>
     <h1>An Illustrated Proof of the CAP Theorem</h1>
+    <p>
+    The <a href="http://en.wikipedia.org/wiki/CAP_theorem">CAP Theorem</a> is a
+    fundamental theorem in distributed systems that states any distributed
+    system can have at most two of the following three properties.
+    </p>
 
-The [CAP Theorem][wikipedia] is a fundamental theorem in distributed systems
-that states any distributed system can have at most two of the following three
-properties.
+    <ul>
+      <li><strong>C</strong>onsistency</li>
+      <li><strong>A</strong>vailability</li>
+      <li><strong>P</strong>artition tolerance</li>
+    </ul>
 
-- **C**onsistency
-- **A**vailability
-- **P**artition tolerance
+    <p>
+    This guide will summarize
+    <a href="http://lpd.epfl.ch/sgilbert/pubs/BrewersConjecture-SigAct.pdf">
+      Gilbert and Lynch's specification and proof of the CAP Theorem</a>
+    with pictures!
+    </p>
 
-This guide will summarize [Gilbert and Lynch's specification and proof of the
-CAP Theorem][paper] with pictures!
+    <h2>What is the CAP Theorem?</h2>
+    <p>
+    The CAP theorem states that a distributed system cannot simultaneously be
+    consistent, available, and partition tolerant. Sounds simple enough, but
+    what does it mean to be consistent? available? partition tolerant? Heck,
+    what exactly do you even mean by a distributed system?
+    </p>
 
-# What is the CAP Theorem? #
-The CAP theorem states that a distributed system cannot simultaneously be
-consistent, available, and partition tolerant. Sounds simple enough, but what
-does it mean to be consistent? available? partition tolerant? Heck, what
-exactly do you even mean by a distributed system?
+    <p>
+    In this section, we'll introduce a simple distributed system and explain
+    what it means for that system to be available, consistent, and partition
+    tolerant.  For a formal description of the system and the three properties,
+    please refer to
+    <a href="http://lpd.epfl.ch/sgilbert/pubs/BrewersConjecture-SigAct.pdf">
+      Gilbert and Lynch's paper</a>.
+    </p>
 
-In this section, we'll introduce a simple distributed system and explain what
-it means for that system to be available, consistent, and partition tolerant.
-For a formal description of the system and the three properties, please refer
-to [Gilbert and Lynch's paper][paper].
+    <h2>A Distributed System</h2>
+    <p>
+    Let's consider a very simple distributed system. Our system is composed of
+    two servers, $G\_1$ and $G\_2$. Both of these servers are keeping track of
+    the same variable, $v$, whose value is initially $v\_0$. $G\_1$ and $G\_2$
+    can communicate with each other and can also communicate with external
+    clients. Here's what our system looks like.
+    </p>
 
-## A Distributed System ##
-Let's consider a very simple distributed system. Our system is composed of two
-servers, $G\_1$ and $G\_2$. Both of these servers are keeping track of the same
-variable, $v$, whose value is initially $v\_0$. $G\_1$ and $G\_2$ can communicate
-with each other and can also communicate with external clients. Here's
-what our system looks like.
+    <center>
+      <img src="assets/cap1.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap1.svg" class="half-image">
-</center>
+    <p>
+    A client can request to write and read from any server. When a server
+    receives a request, it performs any computations it wants and then responds
+    to the client. For example, here is what a write looks like.
+    </p>
 
-A client can request to write and read from any server. When a server receives
-a request, it performs any computations it wants and then responds to the
-client. For example, here is what a write looks like.
+    <center>
+      <img src="assets/cap2.svg" class="half-image">
+      <img src="assets/cap3.svg" class="half-image">
+      <img src="assets/cap4.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap2.svg" class="half-image">
-<img src="assets/cap3.svg" class="half-image">
-<img src="assets/cap4.svg" class="half-image">
-</center>
+    <p>
+    And here is what a read looks like.
+    </p>
 
-And here is what a read looks like.
+    <center>
+      <img src="assets/cap5.svg" class="half-image">
+      <img src="assets/cap6.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap5.svg" class="half-image">
-<img src="assets/cap6.svg" class="half-image">
-</center>
+    <p>
+    Now that we've gotten our system established, let's go over what it means
+    for the system to be consistent, available, and partition tolerant.
+    </p>
 
-Now that we've gotten our system established, let's go over what it means for
-the system to be consistent, available, and partition tolerant.
+    <h2>Consistency</h2>
+    <p>
+    Here's how Gilbert and Lynch describe consistency.
+    </p>
 
-## Consistency ##
-Here's how Gilbert and Lynch describe consistency.
+    <blockquote>
+    any read operation that begins after a write operation completes must
+    return that value, or the result of a later write operation
+    </blockquote>
 
-> any read operation that begins after a write operation completes must return
-> that value, or the result of a later write operation
+    <p>
+    In a consistent system, once a client writes a value to any server and gets
+    a response, it expects to get that value (or a fresher value) back from any
+    server it reads from.
+    </p>
 
-In a consistent system, once a client writes a value to any server and gets a
-response, it expects to get that value (or a fresher value) back from any
-server it reads from.
+    <p>
+    Here is an example of an <strong>inconsistent</strong> system.
+    </p>
 
-Here is an example of an **inconsistent** system.
+    <center>
+      <img src="assets/cap7.svg" class="half-image">
+      <img src="assets/cap8.svg" class="half-image">
+      <img src="assets/cap9.svg" class="half-image">
+      <img src="assets/cap10.svg" class="half-image">
+      <img src="assets/cap11.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap7.svg" class="half-image">
-<img src="assets/cap8.svg" class="half-image">
-<img src="assets/cap9.svg" class="half-image">
-<img src="assets/cap10.svg" class="half-image">
-<img src="assets/cap11.svg" class="half-image">
-</center>
+    <p>
+    Our client writes $v\_1$ to $G\_1$ and $G\_1$ acknowledges, but when it
+    reads from $G\_2$, it gets stale data: $v\_0$.
+    </p>
 
-Our client writes $v\_1$ to $G\_1$ and $G\_1$ acknowledges, but when it reads from
-$G\_2$, it gets stale data: $v\_0$.
+    <p>
+    On the other hand, here is an example of a <strong>consistent</strong>
+    system.
+    </p>
 
-On the other hand, here is an example of a **consistent** system.
+    <center>
+      <img src="assets/cap12.svg" class="half-image">
+      <img src="assets/cap13.svg" class="half-image">
+      <img src="assets/cap14.svg" class="half-image">
+      <img src="assets/cap15.svg" class="half-image">
+      <img src="assets/cap16.svg" class="half-image">
+      <img src="assets/cap17.svg" class="half-image">
+      <img src="assets/cap18.svg" class="half-image">
+      <img src="assets/cap19.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap12.svg" class="half-image">
-<img src="assets/cap13.svg" class="half-image">
-<img src="assets/cap14.svg" class="half-image">
-<img src="assets/cap15.svg" class="half-image">
-<img src="assets/cap16.svg" class="half-image">
-<img src="assets/cap17.svg" class="half-image">
-<img src="assets/cap18.svg" class="half-image">
-<img src="assets/cap19.svg" class="half-image">
-</center>
+    <p>
+    In this system, $G\_1$ replicates its value to $G\_2$ before sending an
+    acknowledgement to the client. Thus, when the client reads from $G\_2$, it
+    gets the most up to date value of $v$: $v\_1$.
+    </p>
 
-In this system, $G\_1$ replicates its value to $G\_2$ before sending an
-acknowledgement to the client. Thus, when the client reads from $G\_2$, it gets
-the most up to date value of $v$: $v\_1$.
+    <h2>Availability</h2>
+    <p>
+    Here's how Gilbert and Lynch describe availability.
+    </p>
 
-## Availability ##
-Here's how Gilbert and Lynch describe availability.
+    <blockquote>
+    every request received by a non-failing node in the system must result in a
+    response
+    </blockquote>
 
-> every request received by a non-failing node in the system must result in a
-> response
+    <p>
+    In an available system, if our client sends a request to a server and the
+    server has not crashed, then the server must eventually respond to the
+    client. The server is not allowed to ignore the client's requests.
+    </p>
 
-In an available system, if our client sends a request to a server and the server
-has not crashed, then the server must eventually respond to the client. The
-server is not allowed to ignore the client's requests.
+    <h2>Partition Tolerance</h2>
+    <p>
+    Here's how Gilbert and Lynch describe partitions.
+    </p>
 
-## Partition Tolerance ##
-Here's how Gilbert and Lynch describe partitions.
+    <blockquote>
+    the network will be allowed to lose arbitrarily many messages sent from one
+    node to another
+    </blockquote>
 
-> the network will be allowed to lose arbitrarily many messages sent from one
-> node to another
+    <p>
+    This means that any messages $G\_1$ and $G\_2$ send to one another can be
+    dropped.  If all the messages were being dropped, then our system would
+    look like this.
+    </p>
 
-This means that any messages $G\_1$ and $G\_2$ send to one another can
-be dropped.  If all the messages were being dropped, then our system would look
-like this.
+    <center>
+      <img src="assets/cap20.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap20.svg" class="half-image">
-</center>
+    <p>
+    Our system has to be able to function correctly despite arbitrary network
+    partitions in order to be partition tolerant.
+    </p>
 
-Our system has to be able to function correctly despite arbitrary network
-partitions in order to be partition tolerant.
+    <h2>The Proof</h2>
+    <p>
+    Now that we've acquainted ourselves with the notion of consistency,
+    availability, and partition tolerance, we can prove that a system cannot
+    simultaneously have all three.
+    </p>
 
-# The Proof #
-Now that we've acquainted ourselves with the notion of consistency,
-availability, and partition tolerance, we can prove that a system cannot
-simultaneously have all three.
+    <p>
+    Assume for contradiction that there does exist a system that is consistent,
+    available, and partition tolerant. The first thing we do is partition our
+    system. It looks like this.
+    </p>
 
-Assume for contradiction that there does exist a system that is consistent,
-available, and partition tolerant. The first thing we do is partition our
-system. It looks like this.
+    <center>
+      <img src="assets/cap21.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap21.svg" class="half-image">
-</center>
+    <p>
+    Next, we have our client request that $v\_1$ be written to $G\_1$. Since
+    our system is available, $G\_1$ must respond. Since the network is
+    partitioned, however, $G\_1$ cannot replicate its data to $G\_2$. Gilbert
+    and Lynch call this phase of execution $\alpha\_1$.
+    </p>
 
-Next, we have our client request that $v\_1$ be written to $G\_1$. Since our
-system is available, $G\_1$ must respond. Since the network is partitioned,
-however, $G\_1$ cannot replicate its data to $G\_2$. Gilbert and Lynch call
-this phase of execution $\alpha\_1$.
+    <center>
+      <img src="assets/cap22.svg" class="half-image">
+      <img src="assets/cap23.svg" class="half-image">
+      <img src="assets/cap24.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap22.svg" class="half-image">
-<img src="assets/cap23.svg" class="half-image">
-<img src="assets/cap24.svg" class="half-image">
-</center>
+    <p>
+    Next, we have our client issue a read request to $G\_2$. Again, since our
+    system is available, $G\_2$ must respond. And since the network is
+    partitioned, $G\_2$ cannot update its value from $G\_1$. It returns $v\_0$.
+    Gilbert and Lynch call this phase of execution $\alpha\_2$.
+    </p>
 
-Next, we have our client issue a read request to $G\_2$. Again, since our
-system is available, $G\_2$ must respond. And since the network is partitioned,
-$G\_2$ cannot update its value from $G\_1$. It returns $v\_0$. Gilbert and
-Lynch call this phase of execution $\alpha\_2$.
+    <center>
+      <img src="assets/cap25.svg" class="half-image">
+      <img src="assets/cap26.svg" class="half-image">
+    </center>
 
-<center>
-<img src="assets/cap25.svg" class="half-image">
-<img src="assets/cap26.svg" class="half-image">
-</center>
+    <p>
+    $G\_2$ returns $v\_0$ to our client after the client had already written
+    $v\_1$ to $G\_1$. This is inconsistent.
+    </p>
 
-$G\_2$ returns $v\_0$ to our client after the client had already written $v\_1$
-to $G\_1$. This is inconsistent.
-
-We assumed a consistent, available, partition tolerant system existed, but we
-just showed that there exists an execution for any such system in which the
-system acts inconsistently. Thus, no such system exists.
-
-[paper]:     http://lpd.epfl.ch/sgilbert/pubs/BrewersConjecture-SigAct.pdf
-[wikipedia]: http://en.wikipedia.org/wiki/CAP_theorem
+    <p>
+    We assumed a consistent, available, partition tolerant system existed, but
+    we just showed that there exists an execution for any such system in which
+    the system acts inconsistently. Thus, no such system exists.
+    </p>
   </div>
 
   <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
   <script type="text/javascript" async
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
 </body>
 </html>
