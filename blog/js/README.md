@@ -16,7 +16,7 @@ the following languages included:
 - Shell Session
 - C++
 - HTML, XML
-- Java
 - Python
+- Haskell
 - Rust
 - OCaml
