@@ -37,7 +37,7 @@
     <code>xmonad</code>:
     </p>
 
-    <pre><code class="bash">sudo apt-get install gnome-panel xmonad</pre></code>
+    <pre><code class="shell">sudo apt-get install gnome-panel xmonad</pre></code>
 
     <p>
     Now create the file <code>~/.xmonad/xmonad.hs</code> with the following
@@ -103,7 +103,7 @@ main = xmonad gnomeConfig</code></pre>
     The commands I use most frequently are:
     </p>
 
-    <pre><code class="bash">Alt-Shift-Enter # create new terminal
+    <pre><code class="shell">Alt-Shift-Enter # create new terminal
 Alt-p           # launch application
 Alt-Space       # change window layout
 Alt-Tab         # switch window
@@ -124,7 +124,7 @@ Alt-b           # toggle GNOME menu bar and status bar</code></pre>
     when we log in.
     </p>
 
-    <pre><code class="bash">michael@michael:/usr/share/xsessions&#x3bb; ls -1
+    <pre><code class="shell">michael@michael:/usr/share/xsessions&#x3bb; ls -1
 gnome-classic.desktop
 gnome.desktop
 gnome-fallback.desktop
@@ -138,7 +138,7 @@ xmonad.desktop</code></pre>
     Let's take a look at <code>gnome-xmonad.desktop</code>.
     </p>
 
-    <pre><code class="bash">michael@michael:/usr/share/xsessions&#x3bb; cat gnome-xmonad.desktop
+    <pre><code class="shell">michael@michael:/usr/share/xsessions&#x3bb; cat gnome-xmonad.desktop
 [Desktop Entry]
 Name=GNOME with Xmonad
 Exec=gnome-session-xmonad
@@ -164,7 +164,7 @@ exec gnome-session --session xmonad "$@"</code></pre>
     It's over in <code>/usr/share/gnome-sessions/sessions</code>.
     </p>
 
-    <pre><code class="bash">michael@michael:/usr/share/gnome-session/sessions&#x3bb; ls -1
+    <pre><code class="shell">michael@michael:/usr/share/gnome-session/sessions&#x3bb; ls -1
 gnome-classic.session
 gnome-fallback.session
 gnome.session
@@ -176,7 +176,7 @@ xmonad.session</code></pre>
     Let's look at <code>xmonad.session</code>.
     </p>
 
-    <pre><code class="bash">michael@michael:/usr/share/gnome-session/sessions&#x3bb; cat xmonad.session
+    <pre><code class="shell">michael@michael:/usr/share/gnome-session/sessions&#x3bb; cat xmonad.session
 [GNOME Session]
 Name=Xmonad/GNOME
 RequiredComponents=gnome-settings-daemon;gnome-panel;
@@ -193,7 +193,7 @@ DefaultProvider-windowmanager=xmonad</code></pre>
     located in <code>/usr/share/unity-greeter</code>.
     </p>
 
-    <pre><code class="bash">michael@michael:/usr/share/unity-greeter&#x3bb; ls -1
+    <pre><code class="shell">michael@michael:/usr/share/unity-greeter&#x3bb; ls -1
 a11y.svg
 arrow_left.png
 arrow_right.png
