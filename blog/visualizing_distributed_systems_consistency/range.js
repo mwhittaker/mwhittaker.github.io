@@ -14,10 +14,10 @@ range = {}
 //
 // new Range(start, stop) represents the range [start, stop] inclusive on both
 // ends.
-range.Range = function(start, stop) {
+range.Range = function Range(start, stop) {
   common.typecheck(start, "number");
   common.typecheck(stop, "number");
-  common.assert_le(start, stop);
+  common.assert_le(start, stop, undefined, false);
 
   this.start = start;
   this.stop = stop;
