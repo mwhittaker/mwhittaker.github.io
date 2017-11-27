@@ -145,7 +145,7 @@
     Each general also has an <strong>outbox</strong> and <strong>inbox</strong>
     which can hold exactly one enveloped message to send or receive
     respectively. A <strong>configuration</strong> is the pair of Alice and
-    Bob's states $(q\_a, q\_b)$.
+    Bob's states $(q_a, q_b)$.
     </p>
 
     <center>
@@ -195,23 +195,23 @@
 
     <p>
     An <strong>execution</strong> is a sequence of alternating configurations
-    and rounds of events denoted $(C\_0, \phi\_1, C\_1, \phi\_2, \ldots)$. Each
-    $C\_i$ is a configuration and each $\phi\_i$ is a round of events where
+    and rounds of events denoted $(C_0, \phi_1, C_1, \phi_2, \ldots)$. Each
+    $C_i$ is a configuration and each $\phi_i$ is a round of events where
     each general performs a computation event and then a delivery event.
     </p>
 
     <p>
-    An execution $E\_1$ is <strong>indistinguishable</strong> to another
-    execution $E\_2$ for a general $g$ if $g$ sees the same thing in both
+    An execution $E_1$ is <strong>indistinguishable</strong> to another
+    execution $E_2$ for a general $g$ if $g$ sees the same thing in both
     executions. For example, consider a pair of executions with a single round
-    of events with generals $A$ and $B$: $(C\_0, \phi\_1, C\_1)$ and $(C\_0',
-    \phi\_1', C\_1')$. In $\phi\_1$, $A$'s enveloped message is delivered, but
-    in $\phi\_1'$, it is not. Both executions are indistinguishable to $A$
+    of events with generals $A$ and $B$: $(C_0, \phi_1, C_1)$ and $(C_0',
+    \phi_1', C_1')$. In $\phi_1$, $A$'s enveloped message is delivered, but
+    in $\phi_1'$, it is not. Both executions are indistinguishable to $A$
     because she cannot tell if her message was delivered or not. These
     executions are not indistinguishable for $B$ who can tell in round three
-    whether or not the message was delivered. Note that if $E\_1$ and $E\_2$
-    are indistinguishable for $g$, then $g$ performs the same actions in $E\_1$
-    and $E\_2$.
+    whether or not the message was delivered. Note that if $E_1$ and $E_2$
+    are indistinguishable for $g$, then $g$ performs the same actions in $E_1$
+    and $E_2$.
     </p>
 
     <h2>Impossibility Proof</h2>
@@ -244,7 +244,7 @@
     Assume for contradiction that there <em>does exist</em> an algorithm that
     satisfies these two properties. I'll play the part of Eve and construct a
     contradiction. I'll do so with a time machine. I'll begin with some
-    execution $E\_1$ and continuously use my time machine to construct
+    execution $E_1$ and continuously use my time machine to construct
     alternate executions that are indistinguishable to the previous execution
     for either Alice or Bob.
     </p>
@@ -252,38 +252,38 @@
     <p>
     First, I'll start Alice and Bob with 1's as input. I'll allow all messages
     to be delivered and wait all $N$ rounds. By the validity condition, we know
-    that Alice and Bob both output 1. Call this execution $E\_1$.
+    that Alice and Bob both output 1. Call this execution $E_1$.
     </p>
 
     <p>
     Next, I'll fire up my time machine and go back one round into the past.
     I'll keep everything the same except this time I'll burn Alice's last
     message to Bob. Note that I burn the message without opening the envelope
-    and reading the message. Call this execution $E\_2$.  $E\_1$ is
-    indistinguishable to $E\_2$ for Alice. Thus, she must perform the same
-    action in $E\_1$ and $E\_2$. This means Alice must again output 1. By the
+    and reading the message. Call this execution $E_2$.  $E_1$ is
+    indistinguishable to $E_2$ for Alice. Thus, she must perform the same
+    action in $E_1$ and $E_2$. This means Alice must again output 1. By the
     agreement condition, this means that Bob must also output 1.
     </p>
 
     <p>
     I'll fire up my time machine and again keep everything the same as in
-    $E\_2$, except this time I'll burn Bob's last message to Alice. Call this
-    execution $E\_3$. $E\_2$ is indistinguishable to $E\_3$ for Bob, so by a
+    $E_2$, except this time I'll burn Bob's last message to Alice. Call this
+    execution $E_3$. $E_2$ is indistinguishable to $E_3$ for Bob, so by a
     symmetric argument as above, Bob and Alice both output 1.
     </p>
 
     <p>
     I'll continue my time machine antics until I've dropped every messages.
     Alice and Bob still begin with 1's as input and still output 1 after $N$
-    rounds. Call this execution $E\_k$.
+    rounds. Call this execution $E_k$.
     </p>
 
     <p>
     With the help of my time machine, I'll switch Alice's input from 1 to 0.
-    This execution, $E\_{k+1}$, is indistinguishable to $E\_k$ for Alice, so
+    This execution, $E_{k+1}$, is indistinguishable to $E_k$ for Alice, so
     she still outputs 1, as does Bob. Next, I'll switch Bob's input to 0.
-    Again, this execution, $E\_{k+2}$, is indistinguishable to the previous
-    execution, $E\_{k+1}$, for Bob, so both Bob and Alice output 1.
+    Again, this execution, $E_{k+2}$, is indistinguishable to the previous
+    execution, $E_{k+1}$, for Bob, so both Bob and Alice output 1.
     </p>
 
     <p>

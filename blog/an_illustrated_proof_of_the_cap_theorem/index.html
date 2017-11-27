@@ -52,8 +52,8 @@
     <h2>A Distributed System</h2>
     <p>
     Let's consider a very simple distributed system. Our system is composed of
-    two servers, $G\_1$ and $G\_2$. Both of these servers are keeping track of
-    the same variable, $v$, whose value is initially $v\_0$. $G\_1$ and $G\_2$
+    two servers, $G_1$ and $G_2$. Both of these servers are keeping track of
+    the same variable, $v$, whose value is initially $v_0$. $G_1$ and $G_2$
     can communicate with each other and can also communicate with external
     clients. Here's what our system looks like.
     </p>
@@ -117,8 +117,8 @@
     </center>
 
     <p>
-    Our client writes $v\_1$ to $G\_1$ and $G\_1$ acknowledges, but when it
-    reads from $G\_2$, it gets stale data: $v\_0$.
+    Our client writes $v_1$ to $G_1$ and $G_1$ acknowledges, but when it
+    reads from $G_2$, it gets stale data: $v_0$.
     </p>
 
     <p>
@@ -138,9 +138,9 @@
     </center>
 
     <p>
-    In this system, $G\_1$ replicates its value to $G\_2$ before sending an
-    acknowledgement to the client. Thus, when the client reads from $G\_2$, it
-    gets the most up to date value of $v$: $v\_1$.
+    In this system, $G_1$ replicates its value to $G_2$ before sending an
+    acknowledgement to the client. Thus, when the client reads from $G_2$, it
+    gets the most up to date value of $v$: $v_1$.
     </p>
 
     <h2>Availability</h2>
@@ -170,7 +170,7 @@
     </blockquote>
 
     <p>
-    This means that any messages $G\_1$ and $G\_2$ send to one another can be
+    This means that any messages $G_1$ and $G_2$ send to one another can be
     dropped.  If all the messages were being dropped, then our system would
     look like this.
     </p>
@@ -202,10 +202,10 @@
     </center>
 
     <p>
-    Next, we have our client request that $v\_1$ be written to $G\_1$. Since
-    our system is available, $G\_1$ must respond. Since the network is
-    partitioned, however, $G\_1$ cannot replicate its data to $G\_2$. Gilbert
-    and Lynch call this phase of execution $\alpha\_1$.
+    Next, we have our client request that $v_1$ be written to $G_1$. Since
+    our system is available, $G_1$ must respond. Since the network is
+    partitioned, however, $G_1$ cannot replicate its data to $G_2$. Gilbert
+    and Lynch call this phase of execution $\alpha_1$.
     </p>
 
     <center>
@@ -215,10 +215,10 @@
     </center>
 
     <p>
-    Next, we have our client issue a read request to $G\_2$. Again, since our
-    system is available, $G\_2$ must respond. And since the network is
-    partitioned, $G\_2$ cannot update its value from $G\_1$. It returns $v\_0$.
-    Gilbert and Lynch call this phase of execution $\alpha\_2$.
+    Next, we have our client issue a read request to $G_2$. Again, since our
+    system is available, $G_2$ must respond. And since the network is
+    partitioned, $G_2$ cannot update its value from $G_1$. It returns $v_0$.
+    Gilbert and Lynch call this phase of execution $\alpha_2$.
     </p>
 
     <center>
@@ -227,8 +227,8 @@
     </center>
 
     <p>
-    $G\_2$ returns $v\_0$ to our client after the client had already written
-    $v\_1$ to $G\_1$. This is inconsistent.
+    $G_2$ returns $v_0$ to our client after the client had already written
+    $v_1$ to $G_1$. This is inconsistent.
     </p>
 
     <p>
