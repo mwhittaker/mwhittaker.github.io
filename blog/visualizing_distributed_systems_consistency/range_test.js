@@ -20,6 +20,13 @@ range_test.r0_2 = new range.Range(0, 2);
 range_test.r7_9 = new range.Range(7, 9);
 range_test.r2_7 = new range.Range(2, 7);
 
+range_test.test_range = function() {
+  new range.Range(0, 0);
+  new range.Range(0, 1);
+  new range.Range(10, 20);
+  common.expect_error(function () {new range.Range(1, 0)});
+  common.expect_error(function () {new range.Range(2, 0)});
+}
 
 range_test.test_comes_before = function() {
   common.assert(!range_test.r2_4.comes_before(range_test.r3_6));
@@ -49,6 +56,7 @@ range_test.overlaps = function() {
 }
 
 range_test.main = function() {
+  range_test.test_range();
   range_test.test_comes_before();
   range_test.test_comes_after();
   range_test.overlaps();

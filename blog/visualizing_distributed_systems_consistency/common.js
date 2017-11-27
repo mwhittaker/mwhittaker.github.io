@@ -62,3 +62,14 @@ common.typecheck = function(x, type) {
             " (" + x.toString() + ")";
   common.assert_eq(typeof x, type, msg);
 }
+
+// `common.expect_error(f)` runs `f` and throws an `Error` if `f` does not.
+common.expect_error = function(f) {
+  try {
+    f();
+    var error_thrown = false;
+  } catch (e) {
+    var error_thrown = true;
+  }
+  common.assert(error_thrown, "Expected an Error.")
+}
