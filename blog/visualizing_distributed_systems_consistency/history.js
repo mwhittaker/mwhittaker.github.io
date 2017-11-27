@@ -54,6 +54,18 @@ history.Event = function(range, call) {
 //   process_name: string,
 //   events: [Event],
 // }
+history.LocalHistory = function(process_name, events) {
+  common.typecheck(process_name, "string");
+  common.typecheck(events, "object");
+
+  // Check that events are disjoint and sorted.
+  for (var i = 0; i < events.length - 1; ++i) {
+    common.assert(events[i].comes_before(events[i + 1]));
+  }
+
+  this.process_name = process_name;
+  this.events = events;
+}
 
 // type History = {
 //   local_histories: [LocalHistory]
