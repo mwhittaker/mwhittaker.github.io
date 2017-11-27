@@ -1,5 +1,3 @@
-// import common.js
-
 queue = {}
 
 // type Queue = {
