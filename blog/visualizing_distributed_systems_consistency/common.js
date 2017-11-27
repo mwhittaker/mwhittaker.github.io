@@ -25,12 +25,12 @@ common.assert = function(b, msg) {
     msg = "Assertion failed.";
   }
 
-	if (!b) {
-		if (typeof Error !== "undefined") {
-			throw new Error(msg);
-		}
-		throw message;
-	}
+  if (!b) {
+    if (typeof Error !== "undefined") {
+      throw new Error(msg);
+    }
+    throw message;
+  }
 }
 
 common._assert_comparison = function(lhs, rhs, cmp, cmp_str, msg, verbose) {
