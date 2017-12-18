@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outFile": "js/distributed_systems_consistency.js",
+    "pretty": true,
+    "strict": true,
+  },
+  "include": ["ts/*"],
+}
