@@ -18,11 +18,10 @@ export function run_all(): void {
 export function expect_error(f: () => void): void {
   try {
     f();
-    var error_thrown = false;
+    assert.assert(false, "Expected an Error.")
   } catch (e) {
-    var error_thrown = true;
+    // Do nothing. An error is expected.
   }
-  assert.assert(error_thrown, "Expected an Error.")
 }
 
 } // namespace unittest

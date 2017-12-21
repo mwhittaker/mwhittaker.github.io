@@ -44,4 +44,17 @@ unittest.register("assert_test.test_assert_ge", function() {
   unittest.expect_error(function() { assert.assert_ge(1, 2); });
 });
 
+unittest.register("assert_test.test_assert_array_eq", function() {
+  assert.assert_array_eq([], []);
+  assert.assert_array_eq([1], [1]);
+  assert.assert_array_eq([1, 2], [1, 2]);
+  assert.assert_array_eq([1, 2, 3], [1, 2, 3]);
+  unittest.expect_error(function() { assert.assert_array_eq([], [1]); });
+  unittest.expect_error(function() { assert.assert_array_eq([1], []); });
+  unittest.expect_error(function() { assert.assert_array_eq([1], [1, 2]); });
+  unittest.expect_error(function() { assert.assert_array_eq([1, 2], [1]); });
+  unittest.expect_error(function() { assert.assert_array_eq([1], [1, 2]); });
+  unittest.expect_error(function() { assert.assert_array_eq([1, 2], [2, 1]); });
+});
+
 } // assert_test

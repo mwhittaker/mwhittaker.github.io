@@ -10,9 +10,8 @@ var assert;
     }
     assert_1.assert = assert;
     function _assert_comparison(lhs, rhs, cmp, cmp_str, msg) {
-        if (!msg) {
-            msg = lhs + " " + cmp_str + " " + rhs + ".";
-        }
+        var prefix = lhs + " " + cmp_str + " " + rhs;
+        msg = msg ? prefix + ": " + msg : prefix + ".";
         assert(cmp(lhs, rhs), msg);
     }
     function assert_eq(lhs, rhs, msg) {
@@ -45,6 +44,13 @@ var assert;
         _assert_comparison(lhs, rhs, cmp, ">=", msg);
     }
     assert_1.assert_ge = assert_ge;
+    function assert_array_eq(lhs, rhs, msg) {
+        assert_eq(lhs.length, rhs.length, msg);
+        for (var i = 0; i < lhs.length; ++i) {
+            assert_eq(lhs[i], rhs[i], msg ? "index " + i + ": " + msg : "index " + i + ".");
+        }
+    }
+    assert_1.assert_array_eq = assert_array_eq;
 })(assert || (assert = {})); // namespace assert
 /// <reference path="assert.ts" />
 var unittest;
@@ -57,7 +63,7 @@ var unittest;
     function run_all() {
         for (var _i = 0, _unittests_1 = _unittests; _i < _unittests_1.length; _i++) {
             var _a = _unittests_1[_i], name_1 = _a[0], test = _a[1];
-            console.log("running unit test '" + name_1 + "'");
+            console.log(name_1);
             test();
         }
     }
@@ -65,12 +71,11 @@ var unittest;
     function expect_error(f) {
         try {
             f();
-            var error_thrown = false;
+            assert.assert(false, "Expected an Error.");
         }
         catch (e) {
-            var error_thrown = true;
+            // Do nothing. An error is expected.
         }
-        assert.assert(error_thrown, "Expected an Error.");
     }
     unittest.expect_error = expect_error;
 })(unittest || (unittest = {})); // namespace unittest
@@ -112,12 +117,102 @@ var assert_test;
         assert.assert_ge(2, 1);
         unittest.expect_error(function () { assert.assert_ge(1, 2); });
     });
+    unittest.register("assert_test.test_assert_array_eq", function () {
+        assert.assert_array_eq([], []);
+        assert.assert_array_eq([1], [1]);
+        assert.assert_array_eq([1, 2], [1, 2]);
+        assert.assert_array_eq([1, 2, 3], [1, 2, 3]);
+        unittest.expect_error(function () { assert.assert_array_eq([], [1]); });
+        unittest.expect_error(function () { assert.assert_array_eq([1], []); });
+        unittest.expect_error(function () { assert.assert_array_eq([1], [1, 2]); });
+        unittest.expect_error(function () { assert.assert_array_eq([1, 2], [1]); });
+        unittest.expect_error(function () { assert.assert_array_eq([1], [1, 2]); });
+        unittest.expect_error(function () { assert.assert_array_eq([1, 2], [2, 1]); });
+    });
 })(assert_test || (assert_test = {})); // assert_test
 /// <reference path="unittest.ts" />
 function main() {
     unittest.run_all();
 }
 window.onload = main;
+// <reference path="assert.ts" />
+// <reference path="pervasives.ts" />
+// <reference path="unittest.ts" />
+var pervasives_test;
+(function (pervasives_test) {
+    unittest.register("pervasives_test.test_min_and_argmin", function () {
+        var unittests = [
+            [[], null, null],
+            [["a"], 0, "a"],
+            [["a", "b"], 0, "a"],
+            [["b", "a"], 1, "a"],
+            [["a", "b", "c"], 0, "a"],
+            [["b", "a", "c"], 1, "a"],
+            [["b", "c", "a"], 2, "a"],
+        ];
+        var cmp = function (x, y) { return x.localeCompare(y); };
+        for (var _i = 0, unittests_1 = unittests; _i < unittests_1.length; _i++) {
+            var _a = unittests_1[_i], xs = _a[0], i = _a[1], s = _a[2];
+            assert.assert_eq(pervasives.argmin(xs, cmp), i);
+            assert.assert_eq(pervasives.min(xs, cmp), s);
+        }
+    });
+    unittest.register("pervasives_test.test_filter_map", function () {
+        var f = function (x) {
+            if (x % 2 == 0) {
+                return x * x;
+            }
+            else {
+                return null;
+            }
+        };
+        var unittests = [
+            [[], []],
+            [[0], [0]],
+            [[0, 1], [0]],
+            [[0, 1, 2], [0, 4]],
+            [[0, 1, 1, 2, 2, 2], [0, 4, 4, 4]],
+        ];
+        for (var _i = 0, unittests_2 = unittests; _i < unittests_2.length; _i++) {
+            var _a = unittests_2[_i], xs = _a[0], expected = _a[1];
+            assert.assert_array_eq(pervasives.filter_map(xs, f), expected);
+        }
+    });
+})(pervasives_test || (pervasives_test = {})); // namespace pervasives_test
+// <reference path="assert.ts" />
+var pervasives;
+(function (pervasives) {
+    function argmin(xs, cmp) {
+        if (xs.length === 0) {
+            return null;
+        }
+        var min = xs[0];
+        var min_index = 0;
+        for (var i = 1; i < xs.length; ++i) {
+            var x = xs[i];
+            if (cmp(x, min) < 0) {
+                min = x;
+                min_index = i;
+            }
+        }
+        return min_index;
+    }
+    pervasives.argmin = argmin;
+    function min(xs, cmp) {
+        var min_index = argmin(xs, cmp);
+        if (min_index !== null) {
+            return xs[min_index];
+        }
+        else {
+            return null;
+        }
+    }
+    pervasives.min = min;
+    function filter_map(xs, f) {
+        return xs.map(f).filter(function (x) { return x !== null; }).map(function (x) { return x; });
+    }
+    pervasives.filter_map = filter_map;
+})(pervasives || (pervasives = {})); // namespace pervasives
 /// <reference path="assert.ts" />
 var range;
 (function (range) {
@@ -136,6 +231,21 @@ var range;
         };
         Range.prototype.overlaps = function (that) {
             return !(this.comes_before(that) || this.comes_after(that));
+        };
+        // Lexicographically compare ranges.
+        Range.prototype.compare = function (that) {
+            var start_cmp = this.start - that.start;
+            var stop_cmp = this.stop - that.stop;
+            if (start_cmp < 0) {
+                return start_cmp;
+            }
+            else if (start_cmp == 0) {
+                return stop_cmp;
+            }
+            else {
+                assert.assert_gt(start_cmp, 0);
+                return start_cmp;
+            }
         };
         return Range;
     }());
@@ -192,6 +302,20 @@ var range_test;
         assert.assert(!r0_2.overlaps(r3_6));
         assert.assert(!r7_9.overlaps(r3_6));
         assert.assert(r2_7.overlaps(r3_6));
+    });
+    unittest.register("test_range.test_compare", function () {
+        var r01 = new range.Range(0, 1);
+        var r02 = new range.Range(0, 2);
+        var r12 = new range.Range(1, 2);
+        assert.assert_eq(r01.compare(r01), 0);
+        assert.assert_lt(r01.compare(r02), 0);
+        assert.assert_lt(r01.compare(r12), 0);
+        assert.assert_gt(r02.compare(r01), 0);
+        assert.assert_eq(r02.compare(r02), 0);
+        assert.assert_lt(r02.compare(r12), 0);
+        assert.assert_gt(r12.compare(r01), 0);
+        assert.assert_gt(r12.compare(r02), 0);
+        assert.assert_eq(r12.compare(r12), 0);
     });
     unittest.register("test_range.test_contiguous_ranges", function () {
         var r01 = new range.Range(0, 1);
@@ -259,12 +383,15 @@ var register_test;
         }
     });
 })(register_test || (register_test = {})); // namespace register_test
+/// <reference path="pervasives.ts" />
 /// <reference path="range.ts" />
 /// <reference path="state_machine.ts" />
 var schedule;
 (function (schedule) {
     var Event = /** @class */ (function () {
-        function Event(f, args, response, range) {
+        function Event(process_name, index, f, args, response, range) {
+            this.process_name = process_name;
+            this.index = index;
             this.f = f;
             this.args = args;
             this.original_response = response;
@@ -278,8 +405,59 @@ var schedule;
         return Event;
     }());
     schedule.Event = Event;
-    //export class LocalSchedule<T extends state_machine.StateMachine> {
-    //}
+    var LocalSchedule = /** @class */ (function () {
+        function LocalSchedule(process_name) {
+            this.process_name = process_name;
+            this.events = [];
+        }
+        LocalSchedule.prototype.add = function (f, args, response, range) {
+            // Check that all events are serial.
+            if (this.events.length > 0) {
+                var last_event = this.events[this.events.length - 1];
+                assert.assert(last_event.range.comes_before(range));
+            }
+            var index = this.events.length;
+            var e = new Event(this.process_name, index, f, args, response, range);
+            this.events.push(e);
+        };
+        return LocalSchedule;
+    }());
+    schedule.LocalSchedule = LocalSchedule;
+    var Schedule = /** @class */ (function () {
+        function Schedule(local_schedules, state_machine_constructor) {
+            // TODO(mwhittaker): Check that all names are unique.
+            // TODO(mwhittaker): Construct indexes for local_schedule and
+            // local_schedule_index.
+            this.local_schedules = local_schedules;
+            this.state_machine_constructor = state_machine_constructor;
+        }
+        Schedule.prototype.local_schedule = function (name) {
+            name;
+            throw new Error("TODO");
+        };
+        Schedule.prototype.local_schedule_index = function (name) {
+            name;
+            throw new Error("TODO");
+        };
+        //private merged_events(): Event<SM>[] {
+        //let merged_events: Event<SM>[] = [];
+        //let local_events = this.local_schedules.map((s) => s.events.slice());
+        //function heads(): Event<SM>[] {
+        //const head_or_null = (es: Event<SM>[]) => es.length > 0 ? es[0] : null;
+        //return pervasives.filter_map(local_events, head_or_null);
+        //}
+        //while (heads().length > 0) {
+        //}
+        //merged_events as any;
+        //local_events as any;
+        //throw new Error();
+        //}
+        Schedule.prototype.are_events_serial = function () {
+            return true;
+        };
+        return Schedule;
+    }());
+    schedule.Schedule = Schedule;
 })(schedule || (schedule = {})); // namespace schedule
 /// <reference path="assert.ts" />
 /// <reference path="range.ts" />
@@ -289,14 +467,17 @@ var schedule;
 var schedule_test;
 (function (schedule_test) {
     unittest.register("schedule_test.test_event", function () {
-        var read = new schedule.Event("read", [], 0, new range.Range(0, 1));
-        var write = new schedule.Event("write", [1], undefined, new range.Range(1, 2));
-        var reg = new register.Register(0);
-        assert.assert_eq(read.response, 0);
-        assert.assert_eq(write.response, undefined);
-        write.call(reg);
-        assert.assert_eq(write.response, undefined);
-        read.call(reg);
-        assert.assert_eq(read.response, 1);
+        //let read = new schedule.Event<register.Register>(
+        //"read", [], 0, new range.Range(0, 1));
+        //let write = new schedule.Event<register.Register>(
+        //"write", [1], undefined, new range.Range(1, 2));
+        //let reg = new register.Register(0);
+        //assert.assert_eq(read.response, 0);
+        //assert.assert_eq(write.response, undefined);
+        //write.call(reg);
+        //assert.assert_eq(write.response, undefined);
+        //read.call(reg);
+        //assert.assert_eq(read.response, 1);
     });
 })(schedule_test || (schedule_test = {})); // namespace schedule_test
+//# sourceMappingURL=distributed_systems_consistency.js.map

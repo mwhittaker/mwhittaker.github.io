@@ -19,6 +19,20 @@ export class Range {
   overlaps(that: Range) {
     return !(this.comes_before(that) || this.comes_after(that));
   }
+
+  // Lexicographically compare ranges.
+  compare(that: Range) {
+    let start_cmp = this.start - that.start;
+    let stop_cmp = this.stop - that.stop;
+    if (start_cmp < 0) {
+      return start_cmp;
+    } else if (start_cmp == 0) {
+      return stop_cmp;
+    } else {
+      assert.assert_gt(start_cmp, 0);
+      return start_cmp;
+    }
+  }
 }
 
 } // namespace range

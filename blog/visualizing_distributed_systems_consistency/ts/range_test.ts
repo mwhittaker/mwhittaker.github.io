@@ -56,6 +56,22 @@ unittest.register("test_range.test_overlaps", function() {
   assert.assert( r2_7.overlaps(r3_6));
 });
 
+unittest.register("test_range.test_compare", function() {
+  let r01 = new range.Range(0, 1);
+  let r02 = new range.Range(0, 2);
+  let r12 = new range.Range(1, 2);
+
+  assert.assert_eq(r01.compare(r01), 0);
+  assert.assert_lt(r01.compare(r02), 0);
+  assert.assert_lt(r01.compare(r12), 0);
+  assert.assert_gt(r02.compare(r01), 0);
+  assert.assert_eq(r02.compare(r02), 0);
+  assert.assert_lt(r02.compare(r12), 0);
+  assert.assert_gt(r12.compare(r01), 0);
+  assert.assert_gt(r12.compare(r02), 0);
+  assert.assert_eq(r12.compare(r12), 0);
+});
+
 unittest.register("test_range.test_contiguous_ranges", function() {
   let r01 = new range.Range(0, 1);
   let r12 = new range.Range(1, 2);
