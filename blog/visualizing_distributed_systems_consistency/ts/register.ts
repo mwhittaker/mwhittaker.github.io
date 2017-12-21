@@ -18,10 +18,9 @@ export class Register implements state_machine.StateMachine {
   }
 
   public call(function_name: string): (...args: any[]) => any {
-    let that = this;
     switch (function_name) {
-      case "read": return function() { return that.read(); };
-      case "write": return function(x: any) { return that.write(x); };
+      case "read": return () => this.read();
+      case "write": return (x: any) => this.write(x);
       default: throw new Error(`Unknown function ${function_name}.`);
     }
   }
