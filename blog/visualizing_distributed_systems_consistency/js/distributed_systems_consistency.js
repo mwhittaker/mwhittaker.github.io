@@ -57,7 +57,7 @@ var unittest;
     function run_all() {
         for (var _i = 0, _unittests_1 = _unittests; _i < _unittests_1.length; _i++) {
             var _a = _unittests_1[_i], name_1 = _a[0], test = _a[1];
-            console.log(name_1);
+            console.log("running unit test '" + name_1 + "'");
             test();
         }
     }
@@ -121,8 +121,7 @@ window.onload = main;
 /// <reference path="assert.ts" />
 var range;
 (function (range) {
-    // Range(start, stop) represents the range [start, stop] that is inclusive on
-    // both ends.
+    // Range(start, stop) represents the range [start, stop).
     var Range = /** @class */ (function () {
         function Range(start, stop) {
             this.start = start;
@@ -130,10 +129,10 @@ var range;
             assert.assert_le(start, stop);
         }
         Range.prototype.comes_before = function (that) {
-            return this.stop < that.start;
+            return this.stop <= that.start;
         };
         Range.prototype.comes_after = function (that) {
-            return this.start > that.stop;
+            return this.start >= that.stop;
         };
         Range.prototype.overlaps = function (that) {
             return !(this.comes_before(that) || this.comes_after(that));
@@ -156,13 +155,13 @@ var range_test;
     // [7, 9]                       ------
     // [2, 7]        ---------------
     //         0  1  2  3  4  5  6  7  8  9
-    var _r3_6 = new range.Range(3, 6);
-    var _r2_4 = new range.Range(2, 4);
-    var _r5_7 = new range.Range(5, 7);
-    var _r4_5 = new range.Range(4, 5);
-    var _r0_2 = new range.Range(0, 2);
-    var _r7_9 = new range.Range(7, 9);
-    var _r2_7 = new range.Range(2, 7);
+    var r3_6 = new range.Range(3, 6);
+    var r2_4 = new range.Range(2, 4);
+    var r5_7 = new range.Range(5, 7);
+    var r4_5 = new range.Range(4, 5);
+    var r0_2 = new range.Range(0, 2);
+    var r7_9 = new range.Range(7, 9);
+    var r2_7 = new range.Range(2, 7);
     unittest.register("test_range.test_range", function () {
         new range.Range(0, 0);
         new range.Range(0, 1);
@@ -171,27 +170,133 @@ var range_test;
         unittest.expect_error(function () { new range.Range(2, 0); });
     });
     unittest.register("test_range.test_comes_before", function () {
-        assert.assert(!_r2_4.comes_before(_r3_6));
-        assert.assert(!_r5_7.comes_before(_r3_6));
-        assert.assert(!_r4_5.comes_before(_r3_6));
-        assert.assert(_r0_2.comes_before(_r3_6));
-        assert.assert(!_r7_9.comes_before(_r3_6));
-        assert.assert(!_r2_7.comes_before(_r3_6));
+        assert.assert(!r2_4.comes_before(r3_6));
+        assert.assert(!r5_7.comes_before(r3_6));
+        assert.assert(!r4_5.comes_before(r3_6));
+        assert.assert(r0_2.comes_before(r3_6));
+        assert.assert(!r7_9.comes_before(r3_6));
+        assert.assert(!r2_7.comes_before(r3_6));
     });
     unittest.register("test_range.test_comes_after", function () {
-        assert.assert(!_r2_4.comes_after(_r3_6));
-        assert.assert(!_r5_7.comes_after(_r3_6));
-        assert.assert(!_r4_5.comes_after(_r3_6));
-        assert.assert(!_r0_2.comes_after(_r3_6));
-        assert.assert(_r7_9.comes_after(_r3_6));
-        assert.assert(!_r2_7.comes_after(_r3_6));
+        assert.assert(!r2_4.comes_after(r3_6));
+        assert.assert(!r5_7.comes_after(r3_6));
+        assert.assert(!r4_5.comes_after(r3_6));
+        assert.assert(!r0_2.comes_after(r3_6));
+        assert.assert(r7_9.comes_after(r3_6));
+        assert.assert(!r2_7.comes_after(r3_6));
     });
     unittest.register("test_range.test_overlaps", function () {
-        assert.assert(_r2_4.overlaps(_r3_6));
-        assert.assert(_r5_7.overlaps(_r3_6));
-        assert.assert(_r4_5.overlaps(_r3_6));
-        assert.assert(!_r0_2.overlaps(_r3_6));
-        assert.assert(!_r7_9.overlaps(_r3_6));
-        assert.assert(_r2_7.overlaps(_r3_6));
+        assert.assert(r2_4.overlaps(r3_6));
+        assert.assert(r5_7.overlaps(r3_6));
+        assert.assert(r4_5.overlaps(r3_6));
+        assert.assert(!r0_2.overlaps(r3_6));
+        assert.assert(!r7_9.overlaps(r3_6));
+        assert.assert(r2_7.overlaps(r3_6));
+    });
+    unittest.register("test_range.test_contiguous_ranges", function () {
+        var r01 = new range.Range(0, 1);
+        var r12 = new range.Range(1, 2);
+        var r23 = new range.Range(2, 3);
+        assert.assert(r01.comes_before(r12));
+        assert.assert(r12.comes_before(r23));
+        assert.assert(!r01.comes_after(r12));
+        assert.assert(!r12.comes_after(r23));
+        assert.assert(r23.comes_after(r12));
+        assert.assert(r12.comes_after(r01));
+        assert.assert(!r23.comes_before(r12));
+        assert.assert(!r12.comes_before(r01));
+        assert.assert(r01.overlaps(r01));
+        assert.assert(r12.overlaps(r12));
+        assert.assert(r23.overlaps(r23));
+        assert.assert(!r01.overlaps(r12));
+        assert.assert(!r12.overlaps(r23));
     });
 })(range_test || (range_test = {})); // namespace range_test
+/// <reference path="state_machine.ts" />
+var register;
+(function (register) {
+    var Register = /** @class */ (function () {
+        function Register(x) {
+            this.x = x;
+        }
+        Register.prototype.read = function () {
+            return this.x;
+        };
+        Register.prototype.write = function (x) {
+            this.x = x;
+        };
+        Register.prototype.call = function (function_name) {
+            var that = this;
+            switch (function_name) {
+                case "read": return function () { return that.read(); };
+                case "write": return function (x) { return that.write(x); };
+                default: throw new Error("Unknown function " + function_name + ".");
+            }
+        };
+        return Register;
+    }());
+    register.Register = Register;
+})(register || (register = {})); // namespace register
+/// <reference path="register.ts" />
+/// <reference path="unittest.ts" />
+/// <reference path="assert.ts" />
+var register_test;
+(function (register_test) {
+    unittest.register("register_test.test_read_write", function () {
+        var reg = new register.Register(0);
+        assert.assert_eq(reg.read(), 0);
+        for (var i = 1; i < 10; ++i) {
+            reg.write(i);
+            assert.assert_eq(reg.read(), i);
+        }
+    });
+    unittest.register("register_test.test_call", function () {
+        var reg = new register.Register(0);
+        assert.assert_eq(reg.call("read")(), 0);
+        for (var i = 1; i < 10; ++i) {
+            reg.call("write")(i);
+            assert.assert_eq(reg.call("read")(), i);
+        }
+    });
+})(register_test || (register_test = {})); // namespace register_test
+/// <reference path="range.ts" />
+/// <reference path="state_machine.ts" />
+var schedule;
+(function (schedule) {
+    var Event = /** @class */ (function () {
+        function Event(f, args, response, range) {
+            this.f = f;
+            this.args = args;
+            this.original_response = response;
+            this.original_range = range;
+            this.response = response;
+            this.range = range;
+        }
+        Event.prototype.call = function (sm) {
+            this.response = sm.call(this.f).apply(void 0, this.args);
+        };
+        return Event;
+    }());
+    schedule.Event = Event;
+    //export class LocalSchedule<T extends state_machine.StateMachine> {
+    //}
+})(schedule || (schedule = {})); // namespace schedule
+/// <reference path="assert.ts" />
+/// <reference path="range.ts" />
+/// <reference path="register.ts" />
+/// <reference path="schedule.ts" />
+/// <reference path="unittest.ts" />
+var schedule_test;
+(function (schedule_test) {
+    unittest.register("schedule_test.test_event", function () {
+        var read = new schedule.Event("read", [], 0, new range.Range(0, 1));
+        var write = new schedule.Event("write", [1], undefined, new range.Range(1, 2));
+        var reg = new register.Register(0);
+        assert.assert_eq(read.response, 0);
+        assert.assert_eq(write.response, undefined);
+        write.call(reg);
+        assert.assert_eq(write.response, undefined);
+        read.call(reg);
+        assert.assert_eq(read.response, 1);
+    });
+})(schedule_test || (schedule_test = {})); // namespace schedule_test
