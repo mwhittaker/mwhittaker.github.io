@@ -352,10 +352,7 @@ var register;
         };
         Register.prototype.call = function (function_name) {
             var _this = this;
-            // let that = this;
             switch (function_name) {
-                // case "read": return function() { return that.read(); };
-                // case "write": return function(x: any) { return that.write(x); };
                 case "read": return function () { return _this.read(); };
                 case "write": return function (x) { return _this.write(x); };
                 default: throw new Error("Unknown function " + function_name + ".");
