@@ -4,7 +4,7 @@
 
 namespace pervasives_test {
 
-unittest.register("pervasives_test.test_min_and_argmin", function() {
+unittest.register("pervasives_test.test_min_and_argmin", () => {
   const unittests: [string[], number | null, string | null][] = [
     [[], null, null],
     [["a"], 0, "a"],
@@ -22,14 +22,14 @@ unittest.register("pervasives_test.test_min_and_argmin", function() {
   }
 });
 
-unittest.register("pervasives_test.test_filter_map", function() {
-  const f = function(x: number): number | null {
-    if (x % 2 == 0) {
+unittest.register("pervasives_test.test_filter_map", () => {
+  const f = (x: number): number | null => {
+    if (x % 2 === 0) {
       return x * x;
     } else {
       return null;
     }
-  }
+  };
 
   const unittests: [number[], number[]][] = [
     [[], []],

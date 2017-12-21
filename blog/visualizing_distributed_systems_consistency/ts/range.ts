@@ -8,25 +8,25 @@ export class Range {
     assert.assert_le(start, stop);
   }
 
-  comes_before(that: Range): boolean {
+  public comes_before(that: Range): boolean {
     return this.stop <= that.start;
   }
 
-  comes_after(that: Range) {
+  public comes_after(that: Range) {
     return this.start >= that.stop;
   }
 
-  overlaps(that: Range) {
+  public overlaps(that: Range) {
     return !(this.comes_before(that) || this.comes_after(that));
   }
 
   // Lexicographically compare ranges.
-  compare(that: Range) {
-    let start_cmp = this.start - that.start;
-    let stop_cmp = this.stop - that.stop;
+  public compare(that: Range) {
+    const start_cmp = this.start - that.start;
+    const stop_cmp = this.stop - that.stop;
     if (start_cmp < 0) {
       return start_cmp;
-    } else if (start_cmp == 0) {
+    } else if (start_cmp === 0) {
       return stop_cmp;
     } else {
       assert.assert_gt(start_cmp, 0);

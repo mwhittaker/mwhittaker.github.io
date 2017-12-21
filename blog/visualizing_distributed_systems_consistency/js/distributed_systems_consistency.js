@@ -1,7 +1,7 @@
 "use strict";
 var assert;
 (function (assert_1) {
-    // https://stackoverflow.com/a/15313435
+    // tslint:disable:no-shadowed-variable
     function assert(b, msg) {
         if (msg === void 0) { msg = "Assertion failed."; }
         if (!b) {
@@ -55,14 +55,14 @@ var assert;
 /// <reference path="assert.ts" />
 var unittest;
 (function (unittest) {
-    var _unittests = [];
+    var unittests = [];
     function register(name, test) {
-        _unittests.push([name, test]);
+        unittests.push([name, test]);
     }
     unittest.register = register;
     function run_all() {
-        for (var _i = 0, _unittests_1 = _unittests; _i < _unittests_1.length; _i++) {
-            var _a = _unittests_1[_i], name_1 = _a[0], test = _a[1];
+        for (var _i = 0, unittests_1 = unittests; _i < unittests_1.length; _i++) {
+            var _a = unittests_1[_i], name_1 = _a[0], test = _a[1];
             console.log(name_1);
             test();
         }
@@ -151,15 +151,15 @@ var pervasives_test;
             [["b", "c", "a"], 2, "a"],
         ];
         var cmp = function (x, y) { return x.localeCompare(y); };
-        for (var _i = 0, unittests_1 = unittests; _i < unittests_1.length; _i++) {
-            var _a = unittests_1[_i], xs = _a[0], i = _a[1], s = _a[2];
+        for (var _i = 0, unittests_2 = unittests; _i < unittests_2.length; _i++) {
+            var _a = unittests_2[_i], xs = _a[0], i = _a[1], s = _a[2];
             assert.assert_eq(pervasives.argmin(xs, cmp), i);
             assert.assert_eq(pervasives.min(xs, cmp), s);
         }
     });
     unittest.register("pervasives_test.test_filter_map", function () {
         var f = function (x) {
-            if (x % 2 == 0) {
+            if (x % 2 === 0) {
                 return x * x;
             }
             else {
@@ -173,8 +173,8 @@ var pervasives_test;
             [[0, 1, 2], [0, 4]],
             [[0, 1, 1, 2, 2, 2], [0, 4, 4, 4]],
         ];
-        for (var _i = 0, unittests_2 = unittests; _i < unittests_2.length; _i++) {
-            var _a = unittests_2[_i], xs = _a[0], expected = _a[1];
+        for (var _i = 0, unittests_3 = unittests; _i < unittests_3.length; _i++) {
+            var _a = unittests_3[_i], xs = _a[0], expected = _a[1];
             assert.assert_array_eq(pervasives.filter_map(xs, f), expected);
         }
     });
@@ -186,12 +186,12 @@ var pervasives;
         if (xs.length === 0) {
             return null;
         }
-        var min = xs[0];
+        var min_x = xs[0];
         var min_index = 0;
         for (var i = 1; i < xs.length; ++i) {
             var x = xs[i];
-            if (cmp(x, min) < 0) {
-                min = x;
+            if (cmp(x, min_x) < 0) {
+                min_x = x;
                 min_index = i;
             }
         }
@@ -239,7 +239,7 @@ var range;
             if (start_cmp < 0) {
                 return start_cmp;
             }
-            else if (start_cmp == 0) {
+            else if (start_cmp === 0) {
                 return stop_cmp;
             }
             else {
@@ -273,6 +273,7 @@ var range_test;
     var r7_9 = new range.Range(7, 9);
     var r2_7 = new range.Range(2, 7);
     unittest.register("test_range.test_range", function () {
+        // tslint:disable:no-unused-expression
         new range.Range(0, 0);
         new range.Range(0, 1);
         new range.Range(10, 20);
@@ -467,17 +468,18 @@ var schedule;
 var schedule_test;
 (function (schedule_test) {
     unittest.register("schedule_test.test_event", function () {
-        //let read = new schedule.Event<register.Register>(
-        //"read", [], 0, new range.Range(0, 1));
-        //let write = new schedule.Event<register.Register>(
-        //"write", [1], undefined, new range.Range(1, 2));
-        //let reg = new register.Register(0);
-        //assert.assert_eq(read.response, 0);
-        //assert.assert_eq(write.response, undefined);
-        //write.call(reg);
-        //assert.assert_eq(write.response, undefined);
-        //read.call(reg);
-        //assert.assert_eq(read.response, 1);
+        // let read = new schedule.Event<register.Register>(
+        //   "read", [], 0, new range.Range(0, 1));
+        // let write = new schedule.Event<register.Register>(
+        //   "write", [1], undefined, new range.Range(1, 2));
+        // let reg = new register.Register(0);
+        //
+        // assert.assert_eq(read.response, 0);
+        // assert.assert_eq(write.response, undefined);
+        // write.call(reg);
+        // assert.assert_eq(write.response, undefined);
+        // read.call(reg);
+        // assert.assert_eq(read.response, 1);
     });
 })(schedule_test || (schedule_test = {})); // namespace schedule_test
 //# sourceMappingURL=distributed_systems_consistency.js.map

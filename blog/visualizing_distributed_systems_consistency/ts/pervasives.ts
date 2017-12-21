@@ -7,12 +7,12 @@ export function argmin<T>(xs: T[], cmp: (x: T, y: T) => number): number | null {
     return null;
   }
 
-  let min = xs[0];
+  let min_x = xs[0];
   let min_index = 0;
   for (let i = 1; i < xs.length; ++i) {
-    let x = xs[i];
-    if (cmp(x, min) < 0) {
-      min = x;
+    const x = xs[i];
+    if (cmp(x, min_x) < 0) {
+      min_x = x;
       min_index = i;
     }
   }

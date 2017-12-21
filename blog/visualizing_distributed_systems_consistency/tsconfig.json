@@ -8,6 +8,8 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
+    "target": "es5",
+    "lib": ["DOM", "ES5", "ScriptHost", "ES6"],
   },
   "include": ["ts/*"],
 }

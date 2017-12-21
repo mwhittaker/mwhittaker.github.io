@@ -1,0 +1,16 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+      "no-console": false,
+      "array-type": [true, "array"],
+      "variable-name": ["ban-keywords", "check-format", "allow-snake-case"],
+      "no-reference": false,
+      "interface-name": false,
+      "no-namespace": false
+    },
+    "rulesDirectory": []
+}

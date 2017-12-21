@@ -9,15 +9,15 @@ export class Register implements state_machine.StateMachine {
     this.x = x;
   }
 
-  read(): any {
+  public read(): any {
     return this.x;
   }
 
-  write(x: any): void {
+  public write(x: any): void {
     this.x = x;
   }
 
-  call(function_name: string): (...args: any[]) => any {
+  public call(function_name: string): (...args: any[]) => any {
     let that = this;
     switch (function_name) {
       case "read": return function() { return that.read(); };
