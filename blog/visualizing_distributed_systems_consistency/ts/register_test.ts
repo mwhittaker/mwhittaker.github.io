@@ -1,6 +1,6 @@
+/// <reference path="assert.ts" />
 /// <reference path="register.ts" />
 /// <reference path="unittest.ts" />
-/// <reference path="assert.ts" />
 
 namespace register_test {
 
