@@ -5,12 +5,12 @@
     ],
     "jsRules": {},
     "rules": {
-      "no-console": false,
       "array-type": [true, "array"],
-      "variable-name": ["ban-keywords", "check-format", "allow-snake-case"],
-      "no-reference": false,
       "interface-name": false,
-      "no-namespace": false
+      "no-console": false,
+      "no-namespace": false,
+      "no-reference": false,
+      "variable-name": ["ban-keywords", "check-format", "allow-snake-case"]
     },
     "rulesDirectory": []
 }
