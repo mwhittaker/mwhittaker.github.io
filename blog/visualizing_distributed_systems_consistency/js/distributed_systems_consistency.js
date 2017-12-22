@@ -213,6 +213,69 @@ var pervasives;
     }
     pervasives.filter_map = filter_map;
 })(pervasives || (pervasives = {})); // namespace pervasives
+/// <reference path="state_machine.ts" />
+var queue;
+(function (queue) {
+    var Queue = /** @class */ (function () {
+        function Queue() {
+            this.xs = [];
+        }
+        Queue.prototype.push = function (x) {
+            this.xs.push(x);
+        };
+        Queue.prototype.pop = function () {
+            return this.xs.shift();
+        };
+        Queue.prototype.call = function (function_name) {
+            var _this = this;
+            switch (function_name) {
+                case "push": return function (x) { return _this.push(x); };
+                case "pop": return function () { return _this.pop(); };
+                default: throw new Error("Unknown function " + function_name + ".");
+            }
+        };
+        return Queue;
+    }());
+    queue.Queue = Queue;
+})(queue || (queue = {})); // namespace queue
+/// <reference path="assert.ts" />
+/// <reference path="queue.ts" />
+/// <reference path="unittest.ts" />
+var queue_test;
+(function (queue_test) {
+    unittest.register("queue_test.test_push_pop", function () {
+        var q = new queue.Queue();
+        assert.assert_eq(q.pop(), undefined);
+        for (var i = 0; i < 10; ++i) {
+            q.push(i);
+        }
+        for (var i = 0; i < 10; ++i) {
+            assert.assert_eq(q.pop(), i);
+        }
+        q.push(1);
+        q.push(2);
+        assert.assert_eq(q.pop(), 1);
+        q.push(3);
+        assert.assert_eq(q.pop(), 2);
+        assert.assert_eq(q.pop(), 3);
+    });
+    unittest.register("queue_test.test_call", function () {
+        var q = new queue.Queue();
+        assert.assert_eq(q.call("pop")(), undefined);
+        for (var i = 0; i < 10; ++i) {
+            q.call("push")(i);
+        }
+        for (var i = 0; i < 10; ++i) {
+            assert.assert_eq(q.call("pop")(), i);
+        }
+        q.call("push")(1);
+        q.call("push")(2);
+        assert.assert_eq(q.call("pop")(), 1);
+        q.call("push")(3);
+        assert.assert_eq(q.call("pop")(), 2);
+        assert.assert_eq(q.call("pop")(), 3);
+    });
+})(queue_test || (queue_test = {})); // namespace queue_test
 /// <reference path="assert.ts" />
 var range;
 (function (range) {
@@ -362,9 +425,9 @@ var register;
     }());
     register.Register = Register;
 })(register || (register = {})); // namespace register
+/// <reference path="assert.ts" />
 /// <reference path="register.ts" />
 /// <reference path="unittest.ts" />
-/// <reference path="assert.ts" />
 var register_test;
 (function (register_test) {
     unittest.register("register_test.test_read_write", function () {
@@ -387,6 +450,7 @@ var register_test;
 /// <reference path="pervasives.ts" />
 /// <reference path="range.ts" />
 /// <reference path="state_machine.ts" />
+// tslint:disable:max-classes-per-file
 var schedule;
 (function (schedule) {
     var Event = /** @class */ (function () {
@@ -400,8 +464,8 @@ var schedule;
             this.response = response;
             this.range = range;
         }
-        Event.prototype.call = function (sm) {
-            this.response = sm.call(this.f).apply(void 0, this.args);
+        Event.prototype.call = function (state_machine) {
+            this.response = state_machine.call(this.f).apply(void 0, this.args);
         };
         return Event;
     }());
@@ -433,11 +497,9 @@ var schedule;
             this.state_machine_constructor = state_machine_constructor;
         }
         Schedule.prototype.local_schedule = function (name) {
-            name;
             throw new Error("TODO");
         };
         Schedule.prototype.local_schedule_index = function (name) {
-            name;
             throw new Error("TODO");
         };
         //private merged_events(): Event<SM>[] {
