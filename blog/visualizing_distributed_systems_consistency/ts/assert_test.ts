@@ -1,7 +1,5 @@
-/// <reference path="assert.ts" />
-/// <reference path="unittest.ts" />
-
-namespace assert_test {
+import * as assert from "./assert";
+import * as unittest from "./unittest";
 
 unittest.register("assert_test.test_assert", () => {
   assert.assert(true);
@@ -56,5 +54,3 @@ unittest.register("assert_test.test_assert_array_eq", () => {
   unittest.expect_error(() => { assert.assert_array_eq([1], [1, 2]); });
   unittest.expect_error(() => { assert.assert_array_eq([1, 2], [2, 1]); });
 });
-
-} // assert_test

@@ -1,6 +1,4 @@
-/// <reference path="assert.ts" />
-
-namespace range {
+import * as assert from "./assert";
 
 // Range(start, stop) represents the range [start, stop).
 export class Range {
@@ -34,5 +32,3 @@ export class Range {
     }
   }
 }
-
-} // namespace range

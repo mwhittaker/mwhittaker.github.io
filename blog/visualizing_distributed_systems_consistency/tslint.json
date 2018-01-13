@@ -8,8 +8,8 @@
       "array-type": [true, "array"],
       "interface-name": false,
       "no-console": false,
-      "no-namespace": false,
       "no-reference": false,
+      "object-literal-sort-keys": false,
       "variable-name": ["ban-keywords", "check-format", "allow-snake-case"]
     },
     "rulesDirectory": []

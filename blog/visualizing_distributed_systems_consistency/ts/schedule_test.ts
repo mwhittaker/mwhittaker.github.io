@@ -1,10 +1,4 @@
-/// <reference path="assert.ts" />
-/// <reference path="range.ts" />
-/// <reference path="register.ts" />
-/// <reference path="schedule.ts" />
-/// <reference path="unittest.ts" />
-
-namespace schedule_test {
+import * as unittest from "./unittest";
 
 unittest.register("schedule_test.test_event", () => {
   // let read = new schedule.Event<register.Register>(
@@ -20,5 +14,3 @@ unittest.register("schedule_test.test_event", () => {
   // read.call(reg);
   // assert.assert_eq(read.response, 1);
 });
-
-} // namespace schedule_test

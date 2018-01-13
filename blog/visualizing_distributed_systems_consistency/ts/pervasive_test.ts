@@ -1,8 +1,6 @@
-// <reference path="assert.ts" />
-// <reference path="pervasives.ts" />
-// <reference path="unittest.ts" />
-
-namespace pervasives_test {
+import * as assert from "./assert";
+import * as pervasives from "./pervasives";
+import * as unittest from "./unittest";
 
 unittest.register("pervasives_test.test_min_and_argmin", () => {
   const unittests: [string[], number | null, string | null][] = [
@@ -43,5 +41,3 @@ unittest.register("pervasives_test.test_filter_map", () => {
     assert.assert_array_eq(pervasives.filter_map(xs, f), expected);
   }
 });
-
-} // namespace pervasives_test

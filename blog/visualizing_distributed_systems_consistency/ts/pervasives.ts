@@ -1,7 +1,3 @@
-// <reference path="assert.ts" />
-
-namespace pervasives {
-
 export function argmin<T>(xs: T[], cmp: (x: T, y: T) => number): number | null {
   if (xs.length === 0) {
     return null;
@@ -32,5 +28,3 @@ export function min<T>(xs: T[], cmp: (x: T, y: T) => number): T | null {
 export function filter_map<A, B>(xs: A[], f: (x: A) => B | null): B[] {
   return xs.map(f).filter((x) => x !== null).map((x) => x as B);
 }
-
-} // namespace pervasives

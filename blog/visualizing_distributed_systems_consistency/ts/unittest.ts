@@ -1,6 +1,4 @@
-/// <reference path="assert.ts" />
-
-namespace unittest {
+import * as assert from "./assert";
 
 const unittests: [string, () => void][] = [];
 
@@ -23,5 +21,3 @@ export function expect_error(f: () => void): void {
     // Do nothing. An error is expected.
   }
 }
-
-} // namespace unittest

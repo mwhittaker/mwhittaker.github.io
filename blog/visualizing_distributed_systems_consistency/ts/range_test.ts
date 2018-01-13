@@ -1,8 +1,6 @@
-/// <reference path="assert.ts" />
-/// <reference path="range.ts" />
-/// <reference path="unittest.ts" />
-
-namespace range_test {
+import * as assert from "./assert";
+import * as range from "./range";
+import * as unittest from "./unittest";
 
 //         0  1  2  3  4  5  6  7  8  9
 // [3, 6]           ----------
@@ -95,5 +93,3 @@ unittest.register("test_range.test_contiguous_ranges", () => {
   assert.assert(!r01.overlaps(r12));
   assert.assert(!r12.overlaps(r23));
 });
-
-} // namespace range_test

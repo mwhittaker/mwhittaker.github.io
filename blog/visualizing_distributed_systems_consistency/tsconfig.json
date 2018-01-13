@@ -5,7 +5,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outFile": "js/distributed_systems_consistency.js",
+    "outDir": "dist",
     "pretty": true,
     "sourceMap": true,
     "strict": true,

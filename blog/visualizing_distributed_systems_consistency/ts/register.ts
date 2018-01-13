@@ -1,6 +1,4 @@
-/// <reference path="state_machine.ts" />
-
-namespace register {
+import * as state_machine from "./state_machine";
 
 export class Register implements state_machine.StateMachine {
   private x: any;
@@ -25,5 +23,3 @@ export class Register implements state_machine.StateMachine {
     }
   }
 }
-
-} // namespace register

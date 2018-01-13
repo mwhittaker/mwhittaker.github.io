@@ -1,8 +1,6 @@
-/// <reference path="assert.ts" />
-/// <reference path="register.ts" />
-/// <reference path="unittest.ts" />
-
-namespace register_test {
+import * as assert from "./assert";
+import * as register from "./register";
+import * as unittest from "./unittest";
 
 unittest.register("register_test.test_read_write", () => {
   const reg = new register.Register(0);
@@ -21,5 +19,3 @@ unittest.register("register_test.test_call", () => {
     assert.assert_eq(reg.call("read")(), i);
   }
 });
-
-} // namespace register_test

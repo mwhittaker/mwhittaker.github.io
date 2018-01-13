@@ -1,5 +1,3 @@
-namespace assert {
-
 // tslint:disable:no-shadowed-variable
 export function assert(b: boolean, msg: string = "Assertion failed."): void {
   if (!b) {
@@ -55,5 +53,3 @@ export function assert_array_eq<A>(lhs: A[], rhs: A[], msg?: string): void {
     assert_eq(lhs[i], rhs[i], msg ? `index ${i}: ${msg}` : `index ${i}.`);
   }
 }
-
-} // namespace assert

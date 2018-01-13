@@ -1,8 +1,6 @@
-/// <reference path="assert.ts" />
-/// <reference path="queue.ts" />
-/// <reference path="unittest.ts" />
-
-namespace queue_test {
+import * as assert from "./assert";
+import * as queue from "./queue";
+import * as unittest from "./unittest";
 
 unittest.register("queue_test.test_push_pop", () => {
   const q = new queue.Queue();
@@ -41,5 +39,3 @@ unittest.register("queue_test.test_call", () => {
   assert.assert_eq(q.call("pop")(), 2);
   assert.assert_eq(q.call("pop")(), 3);
 });
-
-} // namespace queue_test

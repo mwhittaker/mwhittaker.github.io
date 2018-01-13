@@ -1,8 +1,6 @@
-/// <reference path="state_machine.ts" />
+import * as state_machine from "./state_machine";
 
-namespace queue {
-
-export class Queue {
+export class Queue implements state_machine.StateMachine {
   private xs: any[] = [];
 
   public push(x: any): void {
@@ -21,5 +19,3 @@ export class Queue {
     }
   }
 }
-
-} // namespace queue

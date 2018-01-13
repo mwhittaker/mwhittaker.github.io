@@ -1,4 +1,4 @@
-/// <reference path="unittest.ts" />
+import * as unittest from "./unittest";
 
 function main(): void {
   unittest.run_all();
