@@ -1,5 +1,6 @@
 import "./assert_test";
 import "./pervasive_test";
+import "./priority_queue_test";
 import "./queue_test";
 import "./range_test";
 import "./register_test";
