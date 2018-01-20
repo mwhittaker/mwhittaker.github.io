@@ -22,12 +22,6 @@ range.Range = function Range(start, stop) {
   this.start = start;
   this.stop = stop;
 
-  this.shift = function(dx) {
-    common.typecheck(stop, "number");
-    this.start += dx;
-    this.stop += dx;
-  }
-
   this.comes_before = function(that) {
     common.typecheck(that, "object");
     return this.stop < that.start;

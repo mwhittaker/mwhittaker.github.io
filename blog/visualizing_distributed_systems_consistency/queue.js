@@ -1,3 +1,5 @@
+// import history.js
+
 queue = {}
 
 // type Queue = {
@@ -14,5 +16,15 @@ queue.Queue = function() {
 
   this.pop = function() {
     return this._xs.shift();
+  }
+}
+
+queue.RequestBuilder = function() {
+  this.push() = function(x) {
+    return new history.Request("push", [x]);
+  }
+
+  this.pop() = function() {
+    return new history.Request("pop", []);
   }
 }
