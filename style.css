@@ -47,6 +47,14 @@ p {
   margin-top: 0em;
 }
 
+.papertitle {
+  font-weight: bold;
+}
+
+#right h2 {
+  margin-top: 0pt;
+}
+
 @media screen and (min-width: 800px) {
   #container {
     padding-left: 28px;

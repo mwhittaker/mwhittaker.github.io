@@ -18,16 +18,16 @@
 </head>
 
 <body>
-  <div id=container>
+  <div id="container">
     <center>
-      <h1 id=name>Michael Whittaker</h1>
+      <h1 id="name">Michael Whittaker</h1>
     </center>
 
-    <div id=leftright>
-      <div id=left>
+    <div id="leftright">
+      <div id="left">
         <center>
-          <img id=headshot src="headshot.jpg" alt="headshot"><br/>
-          <div id=links>
+          <img id="headshot" src="headshot.jpg" alt="headshot"><br/>
+          <div id="links">
             <p><a href="/blog">[Blog]</a></p>
             <p><a href="https://github.com/mwhittaker">[GitHub]</a></p>
             <p><a href="https://scholar.google.com/citations?user=bgmagbUAAAAJ">[Google Scholar]</a></p>
@@ -35,22 +35,79 @@
         </center>
       </div>
 
-      <div id=right>
-        <p>
-        I'm a PhD student at UC Berkeley studying distributed systems and
-        databases under Professor <a href="http://db.cs.berkeley.edu/jmh/">Joe
-        Hellerstein</a> as part of the
-        <a href="https://rise.cs.berkeley.edu/">RISE Lab</a>.
-        </p>
+      <div id="right">
+        <div id="about">
+          <h2>About</h2>
 
-        <p>
-        As an undergraduate at Cornell University, I researched under
-        Professor <a href="http://www.cs.cornell.edu/~jnfoster/">Nate
-        Foster</a> and worked on a system called
-        <a href="http://www.cs.cornell.edu/~jnfoster/papers/frenetic-felix-sosr16.pdf">Felix</a>
-        which measures network traffic on end hosts by leveraging <a
-        href="http://www.cs.cornell.edu/~jnfoster/papers/frenetic-netkat.pdf">NetKAT</a>.
-        </p>
+          <p>
+          I'm a PhD student at UC Berkeley studying distributed systems and
+          databases under Professor
+          <a href="http://db.cs.berkeley.edu/jmh/">Joe Hellerstein</a> as part
+          of the <a href="https://rise.cs.berkeley.edu/">RISE Lab</a>.
+          </p>
+
+          <p>
+          As an undergraduate at Cornell University, I researched under
+          Professor
+          <a href="http://www.cs.cornell.edu/~jnfoster/">Nate Foster</a>
+          and worked on a system called
+          <a href="felix_SOSR16.pdf">Felix</a>
+          which measures network traffic on end hosts by leveraging
+          <a href="http://www.cs.cornell.edu/~jnfoster/papers/frenetic-netkat.pdf">NetKAT</a>.
+          </p>
+        </div>
+
+        <div id="publications">
+          <h2>Publications</h2>
+
+          <ul>
+            <li>
+              <span class="papertitle">
+                Interactive Checks for Coordination Avoidance
+              </span>
+              <span class="paperauthors">
+                Michael Whittaker, Joseph M. Hellerstein.
+              </span>
+              <span class="papervenue">
+                VLDB 2019 (to appear).
+              </span>
+              <a href="https://github.com/mwhittaker/enforced_invariant_confluence">[code]</a>
+            </li>
+
+            <li>
+              <span class="papertitle">
+                <a href="wat_SOCC18.pdf">
+                  Debugging Distributed Systems with Why-Across-Time Provenance
+                </a>
+              </span>
+              <span class="paperauthors">
+                Michael Whittaker, Cristina Teodoropol, Peter Alvaro, Joseph M.
+                Hellerstein.
+              </span>
+              <span class="papervenue">
+                SOCC 2018 (to appear).
+              </span>
+              <a href="https://github.com/mwhittaker/wat">[code]</a>
+            </li>
+
+            <li>
+              <span class="papertitle">
+                <a href="felix_SOSR16.pdf">
+                  Felix: Implementing Traffic Measurement on End Hosts Using
+                  Program Analysis
+                </a>
+              </span>
+              <span class="paperauthors">
+                Haoxian Chen, Nate Foster, Jake Silverman, Michael Whittaker,
+                Brandon Zhang, Rene Zhang.
+              </span>
+              <span class="papervenue">
+                SOSR 2016.
+              </span>
+              <a href="https://github.com/frenetic-lang/netkat-automata">[code]</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
