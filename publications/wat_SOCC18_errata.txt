@@ -1,0 +1,5 @@
+- In the last paragraph of section 2.1, the first clause of the definition of
+  the happens before relation has an error. It should read "if a_i, a_j are two
+  events within the same process and i < j, then a_i happens before a_j".
+  Thanks to Christoph Bonitz (https://github.com/cbonitz) for discovering this
+  bug!
