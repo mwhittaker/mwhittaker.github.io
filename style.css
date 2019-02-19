@@ -47,6 +47,10 @@ p {
   margin-top: 0em;
 }
 
+#publication_list {
+  padding-left: 20px;
+}
+
 .papertitle {
   font-weight: 500;
 }
