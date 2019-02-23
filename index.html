@@ -25,10 +25,9 @@
     // [1]: https://developers.google.com/analytics/devguides/collection/gtagjs/events
     // [2]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
     function handleOutboundLinkClicks(event) {
-      gtag('send', 'event', {
-        eventCategory: 'Outbound Link',
-        eventAction: 'click',
-        eventLabel: event.target.href
+      gtag('event', 'click', {
+        'event_category': 'link',
+        'event_label': event.target.href
       });
     }
 
