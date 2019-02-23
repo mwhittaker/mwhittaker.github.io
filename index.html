@@ -18,6 +18,27 @@
 
     ga('create', 'UA-90310997-3', 'auto');
     ga('send', 'pageview');
+
+    // By default, Google Analytics does not track link clicks. This code
+    // attaches a click event handler to every link on the page. When a link is
+    // clicked, a Google Analytics event is sent. This allows me to track link
+    // clicks. See [1] for more information.
+    //
+    // [1]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    function handleOutboundLinkClicks(event) {
+      ga('send', 'event', {
+        eventCategory: 'Outbound Link',
+        eventAction: 'click',
+        eventLabel: event.target.href,
+        transport: 'beacon'
+      });
+    }
+
+    window.onload = function() {
+      for (let link of document.querySelectorAll("a")) {
+        link.addEventListener("click", handleOutboundLinkClicks);
+      }
+    }
   </script>
 </head>
 
