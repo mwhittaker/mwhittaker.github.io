@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Safety Proofs for MultiPaxos, Viewstamped Replication, and Raft</title>
+  <link href='/blog/css/style.css' rel='stylesheet'>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+
+  <!-- Google analytics. -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-90310997-3', 'auto');
+    ga('send', 'pageview');
+  </script>
+
+  <style>
+    .assertion {
+      text-align: center;
+      margin-left: 24pt;
+      margin-right: 24pt;
+      background: lightgray;
+    }
+
+    svg {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id=header>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <div id=container>
+    <h1>Safety Proofs for MultiPaxos, Viewstamped Replication</h1>
+    <p>
+    In this article, we prove that
+    <a href="https://scholar.google.com/scholar?cluster=12753876235558083852">MultiPaxos</a>,
+    <a href="https://scholar.google.com/scholar?cluster=13000400770252658813">Viewstamped Replication</a>, and
+    <a href="https://scholar.google.com/scholar?cluster=12646889551697084617">Raft</a>
+    are safe. The proofs are not super formal, but they're hopefully rigorous
+    enough to make you confident that the three protocols are all safe.
+    </p>
+
+    <h2>MultiPaxos</h2>
+
+    <p>
+    First, we prove that Paxos is safe. That is, we prove that in any execution
+    of Paxos, at most one value is chosen. This proof is taken directly from
+    the
+    <a href="https://scholar.google.com/scholar?cluster=14312418264184334702">Fast Paxos paper</a>.
+    To prove that Paxos is safe, we prove the following assertion $P(i)$ for
+    all rounds $i$.
+    </p>
+
+    <div class="assertion">
+      $P(i)$: If an acceptor votes for value $v$ in round $i$, then no value
+      other than $v$ has been or will be chosen in any round less than $i$.
+    </div>
+
+    <p>
+    $P(i)$ suffices to prove that Paxos is safe. Why? Well assume for
+    contradiction that Paxos chooses two distinct values $x$ and $y$ in rounds
+    $i$ and $j$ with $i \lt j$. For $y$ to be chosen in round $j$, some
+    acceptor must have voted for $y$ in round $j$. But, $P(j)$ then tells us
+    that $x$ could not have been chosen in round $i$, a contradiction.
+    </p>
+
+    <p>
+    We prove $P(i)$ by induction on $i$. $P(0)$ is vacuous since there are no
+    rounds less than $0$. For the general case $P(i)$, we note that an acceptor
+    cannot vote for a value $v$ in round $i$ unless the leader of round $i$
+    proposes it. Thus, we perform a case analysis on the code path that the
+    propser takes and show that in all cases, the proposer only proposes value
+    $v$ in round $i$ if no value other than $v$ has been or will be chosen in
+    any round less than $i$.
+    </p>
+
+    <p>
+    Recall that at the end of Phase 1 and at the beginning of Phase 2, the
+    proposer inspects the Phase1b messages that it received from a quorum of
+    acceptors and computes
+    </p>
+
+    <ul>
+      <li>
+        $k$, the largest round in which the quorum voted, or $-1$ if none of
+        the acceptors in the quorum have voted, and
+      </li>
+      <li>
+        $v$, the value voted for in round $k$, or null if $k$ is $-1$. Note
+        that at most one value can be proposed in a given round, so $v$ is
+        guaranteed to be unique for a given $k$.
+      </li>
+    </ul>
+
+    <p>
+    First suppose that $k \neq -1$. In this case, the proposer proposes $v$. We
+    have to prove that no value other than $v$ has been chosen or will be
+    chosen in any round $j \lt i$. We perform a case analysis on $j$. There are
+    three cases to consider, as illustrated below.
+    </p>
+
+    <svg viewBox="0 0 420 120">
+      <line x1="10" x2="410" y1="50" y2="50" stroke="black" stroke-width="2"/>
+      <line x1="10" x2="10" y1="40" y2="60" stroke="black" stroke-width="2" stroke-linecap="round"/>
+      <line x1="210" x2="210" y1="40" y2="60" stroke="black" stroke-width="2" stroke-linecap="round"/>
+      <line x1="410" x2="410" y1="40" y2="60" stroke="black" stroke-width="2" stroke-linecap="round"/>
+      <text x="10" y="35" text-anchor="middle">-1</text>
+      <text x="210" y="35" text-anchor="middle">k</text>
+      <text x="410" y="35" text-anchor="middle">i</text>
+      <line x1="20" x2="110" y1="65" y2="75" stroke="gray" stroke-width="1.5"/>
+      <line x1="110" x2="200" y1="75" y2="65" stroke="gray" stroke-width="1.5"/>
+      <line x1="220" x2="310" y1="65" y2="75" stroke="gray" stroke-width="1.5"/>
+      <line x1="310" x2="400" y1="75" y2="65" stroke="gray" stroke-width="1.5"/>
+      <line x1="210" x2="210" y1="65" y2="75" stroke="gray" stroke-width="1.5"/>
+      <text x="110" y="95" text-anchor="middle">Case 3</text>
+      <text x="210" y="95" text-anchor="middle">Case 2</text>
+      <text x="310" y="95" text-anchor="middle">Case 1</text>
+    </svg>
+
+
+    <ul>
+      <li>
+        <strong>Case 1 &ndash; $k \lt j \lt i$</strong>:
+        The quorum $Q$ of acceptors that the proposer contacted in Phase 1 have
+        all promised to never vote in a round less than $i$. At the same time,
+        none have voted in a round greater than $k$. Recall that $k$ is the
+        <em>largest</em> round in which an acceptor in the quorum voted. Thus,
+        the acceptors in $Q$ have not voted and will never vote in round $j$.
+        In order for a value to be chosen in round $j$, a quorum of acceptors
+        must vote for it in round $j$, but any such quorum will intersect $Q$.
+        Thus, no value at all has been or ever will be chosen in round $j$.
+      </li>
+
+      <li>
+        <strong>Case 2 &ndash; $j = k$</strong>:
+        We must show that no value other than $v$ has been or will be chosen in
+        round $k$. This is straightforward because at most one value is
+        proposed in any given round (let alone chosen), and $v$ was
+        <em>the</em> value proposed in round $k$.
+      </li>
+
+      <li>
+        <strong>Case 3 &ndash; $j \lt k$</strong>:
+        We induct. $P(k)$ tells us that no value other than $v$ has been or
+        will be chosen in any round less than $k$. This is exactly what we're
+        trying to prove.
+      </li>
+    </ul>
+
+    <p>
+    If $k = -1$, then we are in Case 1 above. No value at all has been or will
+    be chosen in any round less than $i$, so the proposer is free to propose
+    any value it desires.
+    </p>
+
+    Paxos is safe, and MultiPaxos simply executes one instance of Paxos for
+    every log entry, so MultiPaxos is safe too.
+
+    <h2>Viewstamped Replicaion</h2>
+    <h2>Raft</h2>
+  </div>
+
+  <script type="text/javascript" src="/blog/js/mathjax_config.js"></script>
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+</body>
+</html>
