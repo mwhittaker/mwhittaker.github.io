@@ -24,6 +24,13 @@
       background: lightgray;
     }
 
+    .bad-assertion {
+      text-align: center;
+      margin-left: 24pt;
+      margin-right: 24pt;
+      background: #e74c3c88;
+    }
+
     svg {
       display: block;
       margin-left: auto;
@@ -130,12 +137,12 @@
     <ul>
       <li>
         <strong>Case 1 &ndash; $k \lt j \lt i$</strong>:
-        The quorum $Q$ of acceptors that the proposer contacted in Phase 1 have
+        The quorum $Q$ of replicas that the leader contacted in Phase 1 have
         all promised to never vote in a round less than $i$. At the same time,
         none have voted in a round greater than $k$. Recall that $k$ is the
         <em>largest</em> round in which an acceptor in the quorum voted. Thus,
-        the acceptors in $Q$ have not voted and will never vote in round $j$.
-        In order for a value to be chosen in round $j$, a quorum of acceptors
+        the replicas in $Q$ have not voted and will never vote in round $j$.
+        In order for a value to be chosen in round $j$, a quorum of replicas
         must vote for it in round $j$, but any such quorum will intersect $Q$.
         Thus, no value at all has been or ever will be chosen in round $j$.
       </li>
@@ -165,7 +172,148 @@
     Paxos is safe, and MultiPaxos simply executes one instance of Paxos for
     every log entry, so MultiPaxos is safe too.
 
-    <h2>Viewstamped Replicaion</h2>
+    <h2>Viewstamped Replication</h2>
+    <p>
+    We now prove that Viewstamped Replication (VR) is safe using a similar
+    proof to the one we used for Paxos. We ignore recovery and reconfiguration.
+    Section 8.1 of the VR paper discusses safety, but the discussion is a bit
+    short (at least short enough that I didn't understand it without thinking
+    really hard). The proof we show here mixes together Paxos' safety proof
+    with the ideas in section 8.1 of the VR paper.
+    </p>
+
+    <p>
+    More carefully, we prove that at most one value can be chosen in every log
+    entry. To do so, we prove, for every view $i$, the assertion $P(i)$:
+    </p>
+
+    <div class="assertion">
+      $P(i)$: When the leader of view $i$ begins view $i$, if log entry $s$ is
+      empty, then no value has been or will be chosen in log entry $s$ in any
+      view less than $i$. If log entry $s$ contains a value $v$, then no value
+      other than $v$ has been or will chosen in log entry $s$ in any view less
+      than $i$.
+    </div>
+
+    <p>
+    You might think, based on the language in the VR paper, that we should try
+    to prove an assertion like this:
+    </p>
+
+    <div class="bad-assertion">
+      $P(i)$: If a value $v$ has been chosen in log entry $s$ in a view less
+      than $i$, then the leader of view $i$ begins with $v$ in entry $s$.
+    </div>
+
+    <p>
+    But this is a bit problematic. We say "$v$ has been chosen", but when? At
+    the time when the leader of view $i$ begins? But what if the leader begins
+    without a value $v$ in entry $s$ because, at that time, the value $v$ was
+    not chosen, but then the value goes on to be chosen later? I tried
+    rewording the assertion to include language like "If a value $v$ has been
+    or could be chosen in log entry $s$", but the assertion always felt a
+    little weak. The assertion we settled on is a little verbose, but it seems
+    the most rigorous.
+    </p>
+
+    <p>
+    Anyway, back to the proof. $P(i)$ suffices to prove that VR is safe. Why?
+    Well assume for contradiction that VR chooses two distinct values $x$ and
+    $y$ in the same log entry $s$ in views $i$ and $j$ with $i \lt j$. Either
+    the leader of view $j$ begins with entry $s$ empty or not. If it's empty,
+    then $P(j)$ tells us that $x$ could not have been chosen in view $i$, a
+    contradiction.  If it's not empty, then it must contain $y$ since a leader
+    only appends to its log, and the leader got $y$ chosen in view $j$. Now
+    $P(j)$ tells us that no value other than $y$ has been or will be chosen in
+    entry $s$ in any view less than $i$, but $x$ was chosen, a contradiction.
+    </p>
+
+    <p>
+    We prove $P(i)$ by induction on $i$. $P(0)$ is vacuous since there are no
+    views less than $0$. For the general case $P(i)$, recall that the leader of
+    view $i$ waits to receive DoViewChange messages from a quorum of the
+    replicas. It then computes, $k$, the largest view in which a replica in the
+    quorum was executing normally and adopts the longest log in view $k$ as its
+    log.
+    </p>
+
+    <p>
+    First suppose that the leader of view $i$ begins with value $v$ in log
+    entry $s$. We must show that no value other than $v$ has been or will be
+    chosen in entry $s$ in any view $j$ less than $i$. We perform a case
+    analysis on $j$. Note that $k \geq 0$ since the log is non-empty.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Case 1 &ndash; $k \lt j \lt i$</strong>:
+        The quorum $Q$ of replicas from which the leader of view $i$ received
+        DoViewChange messages all promised to never vote in a view less than
+        $i$ (by incrementing their view before sending StartViewChange
+        messages). At the same time, none have operated normally in a view
+        greater than $k$. To vote for a value in a given view, a replica must
+        be operating normally in that view. Thus, the replicas in $Q$ have not
+        voted and will never vote in view $j$.  In order for a value to be
+        chosen in view $j$, a quorum of replicas must vote for it in view
+        $j$, but any such quorum will intersect $Q$. Thus, no value at all has
+        been or ever will be chosen in view $j$.
+      </li>
+
+      <li>
+        <strong>Case 2 &ndash; $j = k$</strong>:
+        The leader of view $k$ either began with $v$ in log entry $s$ (maybe
+        already chosen) or later inserted it. In any of these cases, the leader
+        proposes at most one value per log entry in a given view. Thus, no
+        value other than $v$ could have been proposed, let alone chosen, in log
+        entry $s$ in view $k$.
+      </li>
+
+      <li>
+        <strong>Case 3 &ndash; $j \lt k$</strong>:
+        The leader of view $k$ either began with $v$ in its log entry or it did
+        not. $P(k)$ tells us that no value other than $v$ (if it did) or no
+        value at all (if it didn't) has been or will be chosen in log entry $s$
+        in any view less than $k$, which is exactly what we're trying to prove.
+      </li>
+    </ul>
+
+    <p>
+    Now suppose that the leader of view $i$ begins with no value in log entry
+    $s$. We must show that no value has been or will be chosen in any view $j$
+    less than $i$. If $k = -1$, then we are in Case 1 above. Otherwise, $k \neq
+    -1$.  We again perform a case analysis on $j$.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Case 1 &ndash; $k \lt j \lt i$</strong>:
+        This is identical to Case 1 above.
+      </li>
+
+      <li>
+        <strong>Case 2 &ndash; $j = k$</strong>:
+        This is similar to Case 1. Say the leader of view $i$ begins with a log
+        of size $n$. Then, the quorum $Q$ of replicas that the leader contacted
+        in Phase 1 have all <em>not</em> voted for any value in any log entry
+        $n$ or larger in view $k$. Recall that the leader begins with the
+        longest log from view $k$.  Thus, the replicas in $Q$ have not voted
+        and will never vote in round $k$ for any log entry $n$ or larger, in
+        particular, entry $s$.  In order for a value to be chosen in round $k$
+        in entry $s$, a quorum of replicas must vote for it in round $k$, but
+        any such quorum will intersect $Q$.  Thus, no value at all has been or
+        ever will be chosen in round $k$ in entry $s$.
+      </li>
+
+      <li>
+        <strong>Case 3 &ndash; $j \lt k$</strong>:
+        The leader of view $k$ did not begin with a value in entry $s$. If it
+        did, then we would have received it, since every replica begins a view
+        with the log from the leader. Thus, $P(k)$ tells us that no value at
+        all has been or will be chosen in log entry $s$ in any view less than
+        $k$, which is exactly what we're trying to prove.
+      </li>
+    </ul>
+
     <h2>Raft</h2>
   </div>
 
