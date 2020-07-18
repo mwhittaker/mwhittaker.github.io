@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Matchmaker Paxos</title>
+  <link href="../style.css" rel="stylesheet">
+  <link rel="canonical" href="https://mwhittaker.github.io/matchmaker_paxos"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90310997-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-90310997-3');
+
+    // By default, Google Analytics does not track link clicks. This code
+    // attaches a click event handler to every link on the page. When a link is
+    // clicked, a Google Analytics event is sent. This allows me to track link
+    // clicks. See [1] and [2] for more information.
+    //
+    // [1]: https://developers.google.com/analytics/devguides/collection/gtagjs/events
+    // [2]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    function handleOutboundLinkClicks(event) {
+      gtag('event', 'click', {
+        'event_category': 'link',
+        'event_label': event.target.href
+      });
+    }
+
+    window.onload = function() {
+      for (let link of document.querySelectorAll("a")) {
+        link.addEventListener("click", handleOutboundLinkClicks);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <center>
+      <h1 id="name">Matchmaker Paxos</h1>
+    </center>
+
+    <span class="papertitle">
+      <a href="matchmaker_paxos.pdf">
+        "Matchmaker Paxos: A Reconfigurable Consensus Protocol"
+      </a>
+    </span>
+    <span class="paperauthors">
+      Michael Whittaker,
+      Neil Giridharan,
+      Adriana Szekeres,
+      Joseph M. Hellerstein,
+      Heidi Howard,
+      Faisal Nawab,
+      Ion Stoica.
+    </span>
+
+    <h2>Links</h2>
+    <ul>
+      <li>
+        <a href="matchmaker_paxos_tr.pdf">Technical report</a>
+      </li>
+      <li>
+        <a href="https://github.com/mwhittaker/frankenpaxos">Source code</a>
+      </li>
+    </ul>
+
+    <h2>Abstract</h2>
+    <p>
+    State machine replication protocols, like MultiPaxos and Raft, are at the
+    heart of nearly every strongly consistent distributed database. To tolerate
+    machine failures, these protocols must replace failed machines with live
+    machines, a process known as reconfiguration. Reconfiguration has become
+    increasingly important over time as the need for frequent reconfiguration
+    has grown. Despite this, reconfiguration has largely been neglected in the
+    literature. In this paper, we present Matchmaker Paxos and Matchmaker
+    MultiPaxos, a reconfigurable consensus and state machine replication
+    protocol respectively. Our protocols can perform a reconfiguration with
+    little to no impact on the latency or throughput of command processing;
+    they can perform a reconfiguration in one round trip (theoretically) and a
+    few milliseconds (empirically); they provide a number of theoretical
+    insights; and they present a framework that can be generalized to other
+    replication protocols in a way that previous reconfiguration techniques can
+    not. We provide proofs of correctness for the protocols and optimizations,
+    and present empirical results from an open source implementation.
+    </p>
+  </div>
+</body>
+</html>
