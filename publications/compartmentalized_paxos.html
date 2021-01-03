@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Compartmentalized Paxos</title>
+  <link href="../style.css" rel="stylesheet">
+  <link rel="canonical" href="https://mwhittaker.github.io/compartmentalized_paxos/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90310997-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-90310997-3');
+
+    // By default, Google Analytics does not track link clicks. This code
+    // attaches a click event handler to every link on the page. When a link is
+    // clicked, a Google Analytics event is sent. This allows me to track link
+    // clicks. See [1] and [2] for more information.
+    //
+    // [1]: https://developers.google.com/analytics/devguides/collection/gtagjs/events
+    // [2]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    function handleOutboundLinkClicks(event) {
+      gtag('event', 'click', {
+        'event_category': 'link',
+        'event_label': event.target.href
+      });
+    }
+
+    window.onload = function() {
+      for (let link of document.querySelectorAll("a")) {
+        link.addEventListener("click", handleOutboundLinkClicks);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <center>
+      <h1 id="name">Compartmentalized Paxos</h1>
+    </center>
+
+    <span class="papertitle">
+      <a href="compartmentalized_paxos.pdf">
+        "Scaling Replicated State Machines with Compartmentalization"
+      </a>
+    </span>
+    <span class="paperauthors">
+      Michael Whittaker,
+      Ailidani Ailijiang,
+      Aleksey Charapko,
+      Murat Demirbas,
+      Neil Giridharan,
+      Joseph M. Hellerstein,
+      Heidi Howard,
+      Ion Stoica,
+      Adriana Szekeres
+    </span>
+
+    <h2>Links</h2>
+    <ul>
+      <li>
+        <a href="compartmentalized_paxos.pdf">A pre-print of the paper</a>
+      </li>
+      <li>
+        <a href="https://arxiv.org/abs/2012.15762">The technical report on arXiv</a>
+      </li>
+      <li>
+        <a href="https://github.com/mwhittaker/frankenpaxos">The source code on GitHub</a>
+      </li>
+      <li>
+        <a href="https://mwhittaker.github.io/frankenpaxos/js/src/main/js/multipaxos/multipaxos.html">A JavaScript visualization of Compartmentalized MultiPaxos</a>
+      </li>
+    </ul>
+
+    <h2>Abstract</h2>
+    <p>
+    State machine replication protocols, like MultiPaxos and Raft, are a
+    critical component of many distributed systems and databases. However,
+    these protocols offer relatively low throughput due to several bottlenecked
+    components. Numerous existing protocols fix different bottlenecks in
+    isolation but fall short of a complete solution. When you fix one
+    bottleneck, another arises. In this paper, we introduce
+    compartmentalization, the first comprehensive technique to eliminate state
+    machine replication bottlenecks. Compartmentalization involves decoupling
+    individual bottlenecks into distinct components and scaling these
+    components independently. Compartmentalization has two key strengths.
+    First, compartmentalization leads to strong performance. In this paper, we
+    demonstrate how to compartmentalize MultiPaxos to increase its throughput
+    by 6x on a write-only workload and 16x on a mixed read-write workload.
+    Unlike other approaches, we achieve this performance without the need for
+    specialized hardware. Second, compartmentalization is a technique, not a
+    protocol. Industry practitioners can apply compartmentalization to their
+    protocols incrementally without having to adopt a completely new protocol.
+    </p>
+  </div>
+</body>
+</html>
