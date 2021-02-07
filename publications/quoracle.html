@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quoracle</title>
+  <link href="../style.css" rel="stylesheet">
+  <link rel="canonical" href="https://mwhittaker.github.io/quoracle"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90310997-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-90310997-3');
+
+    // By default, Google Analytics does not track link clicks. This code
+    // attaches a click event handler to every link on the page. When a link is
+    // clicked, a Google Analytics event is sent. This allows me to track link
+    // clicks. See [1] and [2] for more information.
+    //
+    // [1]: https://developers.google.com/analytics/devguides/collection/gtagjs/events
+    // [2]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    function handleOutboundLinkClicks(event) {
+      gtag('event', 'click', {
+        'event_category': 'link',
+        'event_label': event.target.href
+      });
+    }
+
+    window.onload = function() {
+      for (let link of document.querySelectorAll("a")) {
+        link.addEventListener("click", handleOutboundLinkClicks);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <center>
+      <h1 id="name">Quoracle</h1>
+    </center>
+
+    <span class="papertitle">
+      <a href="quoracle.pdf">
+        "Read-Write Quorum Systems Made Practical"
+      </a>
+    </span>
+    <span class="paperauthors">
+      Michael Whittaker,
+      Aleksey Charapko,
+      Joseph M. Hellerstein,
+      Heidi Howard,
+      Ion Stoica.
+    </span>
+
+    <h2>Links</h2>
+    <ul>
+      <li>
+        <a href="quoracle.pdf">A pre-print of the paper</a>
+      </li>
+      <li>
+        <a href="https://github.com/mwhittaker/quoracle">The source code on GitHub</a>
+      </li>
+    </ul>
+
+    <h2>Abstract</h2>
+    <p>
+    Quorum systems are a powerful mechanism for ensuring the consistency of
+    replicated data. Production systems usually opt for majority quorums due to
+    their simplicity and fault tolerance, but majority quorum systems provide
+    poor throughput and scalability. Alternatively, researchers have invented a
+    number of theoretically "optimal" quorum systems, but the underlying theory
+    ignores many practical complexities such as machine heterogeneity and
+    workload skew. In this paper, we conduct a pragmatic re-examination of
+    quorum systems. We enrich the current theory on quorum systems with a
+    number of practical refinements to find quorum systems that provide higher
+    throughput, lower latency, and lower network load. We also develop a
+    library Quoracle that precisely quantifies the available trade-offs between
+    quorum systems to empower engineers to find optimal quorum systems, given a
+    set of objectives for specific deployments and workloads.
+    </p>
+  </div>
+</body>
+</html>
