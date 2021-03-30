@@ -5,6 +5,14 @@
   <link href="../style.css" rel="stylesheet">
   <link rel="canonical" href="https://mwhittaker.github.io/quoracle"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .highlight {
+      background-color: #f1c40f40;
+      padding: 12pt;
+      border-radius: 4pt;
+      font-size: 20px;
+    }
+  </style>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90310997-3"></script>
@@ -42,23 +50,28 @@
       <h1 id="name">Quoracle</h1>
     </center>
 
-    <span class="papertitle">
-      <a href="quoracle.pdf">
-        "Read-Write Quorum Systems Made Practical"
-      </a>
-    </span>
-    <span class="paperauthors">
-      Michael Whittaker,
-      Aleksey Charapko,
-      Joseph M. Hellerstein,
-      Heidi Howard,
-      Ion Stoica.
-    </span>
+    <div class="highlight">
+      <span class="papertitle">
+        <a href="quoracle.pdf">
+          "Read-Write Quorum Systems Made Practical"
+        </a>
+      </span>
+      <span class="paperauthors">
+        Michael Whittaker,
+        Aleksey Charapko,
+        Joseph M. Hellerstein,
+        Heidi Howard,
+        Ion Stoica.
+      </span>
+      <span class="papervenue">
+        PaPoC 2021.
+      </span>
+    </div>
 
     <h2>Links</h2>
     <ul>
       <li>
-        <a href="quoracle.pdf">A pre-print of the paper</a>
+        <a href="quoracle.pdf">The paper</a>
       </li>
       <li>
         <a href="https://github.com/mwhittaker/quoracle">The source code on GitHub</a>
@@ -79,7 +92,9 @@
     throughput, lower latency, and lower network load. We also develop a
     library Quoracle that precisely quantifies the available trade-offs between
     quorum systems to empower engineers to find optimal quorum systems, given a
-    set of objectives for specific deployments and workloads.
+    set of objectives for specific deployments and workloads. Our tool is
+    available online at: <a
+    href="https://github.com/mwhittaker/quoracle">https://github.com/mwhittaker/quoracle</a>.
     </p>
   </div>
 </body>
