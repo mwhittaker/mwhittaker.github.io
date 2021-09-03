@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bipartisan Paxos</title>
+  <link href="../style.css" rel="stylesheet">
+  <link rel="canonical" href="https://mwhittaker.github.io/bipartisan_paxos"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90310997-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-90310997-3');
+
+    // By default, Google Analytics does not track link clicks. This code
+    // attaches a click event handler to every link on the page. When a link is
+    // clicked, a Google Analytics event is sent. This allows me to track link
+    // clicks. See [1] and [2] for more information.
+    //
+    // [1]: https://developers.google.com/analytics/devguides/collection/gtagjs/events
+    // [2]: https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+    function handleOutboundLinkClicks(event) {
+      gtag('event', 'click', {
+        'event_category': 'link',
+        'event_label': event.target.href
+      });
+    }
+
+    window.onload = function() {
+      for (let link of document.querySelectorAll("a")) {
+        link.addEventListener("click", handleOutboundLinkClicks);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <center>
+      <h1 id="name">Bipartisan Paxos</h1>
+    </center>
+
+    <span class="papertitle">
+      <a href="matchmaker_paxos.pdf">
+        "A Generalized Multi-Leader State Machine Replication Tutorial"
+      </a>
+    </span>
+    <span class="paperauthors">
+      Michael Whittaker,
+      Neil Giridharan,
+      Adriana Szekeres,
+      Joseph M. Hellerstein,
+      Ion Stoica.
+    </span>
+
+    <h2>Links</h2>
+    <ul>
+      <li>
+        <a href="bipartisan_paxos.pdf">The paper</a>
+      </li>
+      <li>
+        <a href="https://github.com/mwhittaker/frankenpaxos">The source code on GitHub</a>
+      </li>
+    </ul>
+
+    <h2>Abstract</h2>
+    <p>
+    MultiPaxos and Raft are the two most popular and widely deployed state
+    machine replication protocols. There is a more sophisticated family of
+    generalized multi-leader state machine replication protocols like EPaxos,
+    Caesar, and Atlas that have better performance, but they are extremely
+    complicated and hard to understand. Due to their complexity, they have seen
+    little to no industry adoption, and academically there has been a lack of
+    clarity in analyzing, comparing, and extending the protocols. This paper is
+    a tutorial on generalized multi-leader protocols. We explain why the
+    protocols work the way they do, what they have in common, where they
+    differ, which parts of the protocols are straightforward, which are more
+    subtle than they appear, and so on. In doing so, we present four new
+    generalized multi-leader protocols, identify key insights into existing
+    protocols, and taxonomize the space.
+    </p>
+  </div>
+</body>
+</html>
